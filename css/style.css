@@ -1,0 +1,465 @@
+/* =====================================================
+   AGROAMIGO — ATERPEC
+   CORES INVERTIDAS: navbar/seções = VERDE | hero = BRANCO
+   ===================================================== */
+:root {
+    --g50:  #f0fdf4;
+    --g100: #dcfce7;
+    --g200: #bbf7d0;
+    --g300: #86efac;
+    --g400: #4ade80;
+    --g500: #22c55e;
+    --g600: #16a34a;   /* cor principal */
+    --g700: #15803d;
+    --g800: #166534;
+    --g900: #14532d;
+    --font: 'Inter', system-ui, sans-serif;
+    --r: 14px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html  { scroll-behavior: smooth; font-size: 16px; }
+body  { font-family: var(--font); -webkit-font-smoothing: antialiased; }
+a     { text-decoration: none; color: inherit; }
+ul    { list-style: none; padding: 0; }
+
+/* =====================================================
+   NAVBAR — fundo VERDE (invertido)
+   ===================================================== */
+.aa-navbar {
+    background: var(--g600);
+    border-bottom: 1px solid var(--g700);
+    transition: box-shadow .25s;
+    padding: 0;
+    min-height: 68px;
+}
+.aa-navbar.scrolled { box-shadow: 0 4px 24px rgba(0,0,0,.25); }
+.aa-navbar .container { height: 68px; display: flex; align-items: center; }
+
+.aa-logo {
+    font-size: 21px; font-weight: 400;
+    color: #fff !important; display: flex; align-items: center; gap: 8px;
+    white-space: nowrap;
+}
+.aa-logo strong { font-weight: 800; }
+
+.aa-nav-link {
+    font-size: 14px; font-weight: 500;
+    color: rgba(255,255,255,.88) !important;
+    border-radius: 999px;
+    padding: 7px 14px !important;
+    transition: all .2s;
+}
+.aa-nav-link:hover, .aa-nav-link.active {
+    color: #fff !important;
+    background: rgba(255,255,255,.18);
+}
+
+/* Dropdown */
+.aa-dropdown {
+    background: #fff; border: none;
+    border-radius: 12px; padding: 8px;
+    box-shadow: 0 12px 40px rgba(0,0,0,.18);
+    min-width: 190px;
+}
+.aa-dropdown-item {
+    border-radius: 8px; font-size: 14px; font-weight: 500;
+    color: var(--g800) !important; padding: 9px 14px;
+    transition: background .15s;
+}
+.aa-dropdown-item:hover, .aa-dropdown-item.active {
+    background: var(--g50); color: var(--g700) !important;
+}
+
+/* Mobile toggler */
+.aa-toggler { color: #fff; font-size: 26px; line-height: 1; padding: 4px; }
+
+/* Botão do navbar */
+.aa-btn-nav-primary {
+    background: #fff; color: var(--g700);
+    border: none; border-radius: 999px;
+    font-size: 14px; font-weight: 700; padding: 9px 20px;
+    transition: all .2s; white-space: nowrap;
+}
+.aa-btn-nav-primary:hover {
+    background: var(--g50); color: var(--g800); transform: translateY(-1px);
+}
+
+/* =====================================================
+   HERO — fundo BRANCO (invertido)
+   ===================================================== */
+.aa-hero {
+    min-height: 100vh; padding-top: 68px;
+    background: #ffffff;  /* WAS: gradiente verde escuro */
+    display: flex; align-items: center;
+    position: relative; overflow: hidden;
+}
+.aa-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+        radial-gradient(ellipse 55% 65% at 95% 50%, rgba(22,163,74,.08) 0%, transparent 70%),
+        radial-gradient(ellipse 35% 45% at 0% 85%, rgba(22,163,74,.05) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.aa-hero-badge {
+    background: var(--g100); color: var(--g800);
+    border: 1px solid var(--g200);
+    font-size: 11px; font-weight: 700; letter-spacing: .7px;
+    text-transform: uppercase; padding: 5px 16px; border-radius: 999px;
+}
+.aa-hero-title {
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    font-weight: 800; letter-spacing: -1.5px; line-height: 1.1;
+    color: var(--g900);   /* WAS: branco */
+}
+.aa-highlight { color: var(--g600); }
+
+.aa-hero-desc {
+    font-size: 17px; line-height: 1.75;
+    color: #374151;          /* WAS: rgba(255,255,255,.8) */
+    max-width: 480px;
+}
+
+/* Botões no hero (fundo branco) */
+.aa-btn-primary {
+    background: var(--g600); color: #fff; border: none;
+    border-radius: 999px; font-size: 14px; font-weight: 600;
+    box-shadow: 0 6px 24px rgba(22,163,74,.35); transition: all .22s;
+}
+.aa-btn-primary:hover {
+    background: var(--g700); color: #fff;
+    transform: translateY(-2px); box-shadow: 0 10px 32px rgba(22,163,74,.45);
+}
+.aa-btn-outline {
+    background: transparent; color: var(--g700);
+    border: 2px solid var(--g500); border-radius: 999px;
+    font-size: 14px; font-weight: 600; transition: all .22s;
+}
+.aa-btn-outline:hover {
+    background: var(--g50); border-color: var(--g700); color: var(--g800);
+}
+.aa-btn-lg { padding: 13px 30px; font-size: 15px; }
+
+/* Stats (hero) */
+.aa-stat-value { font-size: 26px; font-weight: 800; color: var(--g900); line-height: 1; }
+.aa-stat-label { font-size: 12px; color: #6b7280; font-weight: 500; margin-top: 3px; }
+.aa-stat-divider { width: 1px; height: 36px; background: #e5e7eb; }
+
+/* Visual flutuante do hero */
+.aa-hero-visual {
+    position: relative; width: 360px; height: 360px;
+    display: flex; align-items: center; justify-content: center;
+}
+.aa-visual-circle {
+    position: absolute; inset: 0; border-radius: 50%;
+    background: radial-gradient(circle, rgba(22,163,74,.1) 0%, transparent 70%);
+    border: 2px solid rgba(22,163,74,.12);
+    animation: aa-pulse 3.5s ease-in-out infinite;
+}
+.aa-visual-emoji { font-size: 110px; filter: drop-shadow(0 10px 30px rgba(22,163,74,.2)); }
+
+/* Cards flutuantes — agora VERDES (invertido) */
+.aa-float-card {
+    position: absolute;
+    background: var(--g600);   /* WAS: branco */
+    color: #fff;
+    border-radius: 12px; padding: 12px 16px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 8px 30px rgba(22,163,74,.4);
+    white-space: nowrap;
+}
+.aa-float-top    { top: 30px;    left: -20px; animation: aa-float 4s ease-in-out infinite; }
+.aa-float-bottom { bottom: 40px; right: -10px; animation: aa-float 4s ease-in-out 2s infinite; }
+.aa-fc-icon  { font-size: 22px; }
+.aa-fc-title { font-size: 10px; font-weight: 700; color: rgba(255,255,255,.7); text-transform: uppercase; letter-spacing: .5px; }
+.aa-fc-value { font-size: 13px; font-weight: 700; }
+
+/* =====================================================
+   SEÇÕES — fundo VERDE (invertido)
+   ===================================================== */
+.aa-section     { padding: 88px 0; background: var(--g700); } /* WAS: branco */
+.aa-section-alt { padding: 88px 0; background: var(--g800); } /* WAS: cinza claro */
+
+/* Textos nas seções (sobre fundo verde) */
+.aa-section-badge {
+    display: inline-block;
+    background: rgba(255,255,255,.18); color: #fff;
+    font-size: 11px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; padding: 5px 16px; border-radius: 999px;
+}
+.aa-section-title {
+    font-size: clamp(1.7rem, 3.5vw, 2.5rem);
+    font-weight: 800; letter-spacing: -1px; line-height: 1.2;
+    color: #fff;              /* WAS: escuro */
+}
+.aa-highlight-section { color: var(--g300); } /* verde claro em fundo verde escuro */
+.aa-section-desc { font-size: 15px; color: rgba(255,255,255,.78); line-height: 1.7; }
+
+/* Botões nas seções (fundo verde) */
+.aa-btn-section-primary {
+    background: #fff; color: var(--g700);
+    border: none; border-radius: 999px;
+    font-size: 14px; font-weight: 700; padding: 11px 28px; transition: all .22s;
+}
+.aa-btn-section-primary:hover {
+    background: var(--g50); color: var(--g800); transform: translateY(-1px);
+}
+.aa-btn-section-outline {
+    background: transparent; color: #fff;
+    border: 2px solid rgba(255,255,255,.5);
+    border-radius: 999px; font-size: 14px; font-weight: 600; padding: 11px 28px; transition: all .22s;
+}
+.aa-btn-section-outline:hover {
+    border-color: #fff; background: rgba(255,255,255,.1); color: #fff;
+}
+
+/* =====================================================
+   CARDS (brancos sobre fundo verde)
+   ===================================================== */
+.aa-pilar-card {
+    background: #fff; border-radius: var(--r);
+    padding: 22px 18px; text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,.12); transition: transform .25s;
+}
+.aa-pilar-card:hover { transform: translateY(-4px); }
+.aa-pilar-icon { font-size: 32px; margin-bottom: 10px; }
+.aa-pilar-nome { font-size: 15px; font-weight: 700; color: var(--g800); margin-bottom: 6px; }
+.aa-pilar-desc { font-size: 12px; color: #6b7280; line-height: 1.55; }
+
+/* Cards de animais (home) */
+.aa-animal-card {
+    background: #fff; border-radius: var(--r);
+    padding: 24px 16px; text-align: center;
+    display: block; transition: all .25s;
+    border: 2px solid transparent;
+    box-shadow: 0 4px 16px rgba(0,0,0,.10);
+}
+.aa-animal-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--g300);
+    box-shadow: 0 14px 40px rgba(0,0,0,.18);
+}
+.aa-animal-emoji { font-size: 48px; display: block; margin-bottom: 10px; }
+.aa-animal-name  { font-size: 15px; font-weight: 700; color: var(--g800); }
+.aa-animal-sub   { font-size: 11px; color: #9ca3af; margin-top: 4px; }
+
+/* Passos (como funciona) */
+.aa-passo-card {
+    background: #fff; border-radius: var(--r);
+    padding: 28px 20px; text-align: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,.10); transition: transform .25s;
+}
+.aa-passo-card:hover { transform: translateY(-4px); }
+.aa-passo-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--g600); color: #fff;
+    font-size: 14px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 14px;
+}
+.aa-passo-icon   { font-size: 30px; margin-bottom: 12px; }
+.aa-passo-titulo { font-size: 15px; font-weight: 700; color: var(--g800); margin-bottom: 8px; }
+.aa-passo-desc   { font-size: 13px; color: #6b7280; line-height: 1.6; }
+
+/* =====================================================
+   PAGE HERO (páginas internas)
+   ===================================================== */
+.aa-page-hero {
+    background: var(--g900);
+    padding: 100px 0 60px; position: relative; overflow: hidden;
+}
+.aa-page-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(74,222,128,.1) 0%, transparent 70%);
+}
+.aa-page-emoji { font-size: 68px; display: block; margin-bottom: 14px; }
+.aa-page-title { font-size: clamp(1.9rem, 4vw, 3rem); font-weight: 800; color: #fff; letter-spacing: -1px; }
+.aa-page-desc  { font-size: 16px; color: rgba(255,255,255,.72); max-width: 540px; line-height: 1.7; }
+
+.aa-breadcrumb { display: flex; align-items: center; gap: 4px; }
+.aa-breadcrumb a    { color: rgba(255,255,255,.55); font-size: 13px; }
+.aa-breadcrumb a:hover { color: #fff; }
+.aa-breadcrumb span { color: rgba(255,255,255,.35); font-size: 13px; }
+
+/* =====================================================
+   RAÇAS (cards brancos)
+   ===================================================== */
+.aa-raca-card {
+    background: #fff; border-radius: var(--r); padding: 22px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.10); transition: transform .25s;
+}
+.aa-raca-card:hover { transform: translateY(-4px); }
+.aa-raca-emoji { font-size: 36px; margin-bottom: 10px; }
+.aa-raca-nome  { font-size: 16px; font-weight: 700; color: var(--g800); }
+.aa-raca-tipo  { font-size: 11px; font-weight: 700; color: var(--g600); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+.aa-raca-desc  { font-size: 13px; color: #6b7280; line-height: 1.6; }
+
+/* =====================================================
+   ACCORDION (tópicos técnicos)
+   ===================================================== */
+.aa-accordion-item {
+    border: none !important; border-radius: 12px !important;
+    overflow: hidden; margin-bottom: 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.10);
+}
+.aa-accordion-btn {
+    background: #fff; color: var(--g800) !important;
+    font-size: 16px; font-weight: 700; padding: 18px 22px;
+    border-radius: 12px !important; border: none !important; box-shadow: none !important;
+    transition: background .2s;
+}
+.aa-accordion-btn:not(.collapsed) {
+    background: var(--g50); color: var(--g900) !important;
+}
+.aa-accordion-btn::after { filter: hue-rotate(80deg) saturate(3) brightness(.7); }
+.aa-accordion-body {
+    background: #fff; color: #374151;
+    font-size: 15px; line-height: 1.75; padding: 4px 22px 22px;
+}
+
+.aa-topic-icon { font-size: 20px; margin-right: 10px; }
+
+.aa-dicas { padding: 0; }
+.aa-dicas li {
+    padding: 9px 0 9px 26px; position: relative;
+    border-bottom: 1px solid #f3f4f6; font-size: 14px; color: #374151;
+}
+.aa-dicas li::before { content: '✓'; position: absolute; left: 0; color: var(--g600); font-weight: 700; }
+.aa-dicas li:last-child { border-bottom: none; }
+
+/* CTA box */
+.aa-cta-box {
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 20px; padding: 48px 32px;
+}
+.aa-cta-icon  { font-size: 48px; margin-bottom: 16px; }
+.aa-cta-title { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 12px; }
+.aa-cta-desc  { font-size: 16px; color: rgba(255,255,255,.75); margin-bottom: 28px; }
+
+/* =====================================================
+   FICHAS
+   ===================================================== */
+.aa-ficha-card {
+    background: #fff; border-radius: var(--r); padding: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.10);
+    display: flex; flex-direction: column; transition: all .25s;
+}
+.aa-ficha-card:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(0,0,0,.16); }
+.aa-ficha-emoji { font-size: 40px; margin-bottom: 14px; }
+.aa-ficha-titulo { font-size: 18px; font-weight: 800; color: var(--g800); margin-bottom: 10px; }
+.aa-ficha-desc { font-size: 14px; color: #6b7280; line-height: 1.65; flex: 1; }
+
+.aa-ficha-campos-titulo { font-size: 12px; font-weight: 700; color: var(--g700); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+.aa-ficha-campos { padding: 0; }
+.aa-ficha-campos li {
+    font-size: 13px; color: #4b5563; padding: 5px 0 5px 20px; position: relative;
+    border-bottom: 1px solid #f3f4f6;
+}
+.aa-ficha-campos li::before { content: '→'; position: absolute; left: 0; color: var(--g500); }
+.aa-ficha-campos li:last-child { border-bottom: none; }
+
+/* =====================================================
+   CONTATO
+   ===================================================== */
+.aa-whatsapp-card {
+    background: var(--g700); border-radius: 20px; padding: 36px; color: #fff;
+}
+.aa-wpp-logo {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: rgba(255,255,255,.15); font-size: 30px; color: #fff;
+    display: flex; align-items: center; justify-content: center; margin-bottom: 20px;
+}
+.aa-wpp-titulo { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 12px; }
+.aa-wpp-desc   { font-size: 14px; color: rgba(255,255,255,.78); line-height: 1.7; margin-bottom: 20px; }
+.aa-wpp-features { padding: 0; }
+.aa-wpp-features li { font-size: 14px; color: rgba(255,255,255,.85); padding: 6px 0; }
+.aa-wpp-features .bi-check-circle-fill { color: var(--g300); }
+
+.aa-contact-card {
+    background: #fff; border-radius: 20px; padding: 36px;
+    box-shadow: 0 6px 30px rgba(0,0,0,.10);
+}
+.aa-label { font-size: 13px; font-weight: 600; color: #374151; }
+.aa-input {
+    border: 1.5px solid #e5e7eb; border-radius: 10px;
+    font-size: 14px; color: #1f2937; font-family: var(--font);
+    transition: border-color .2s, box-shadow .2s;
+}
+.aa-input:focus {
+    border-color: var(--g500);
+    box-shadow: 0 0 0 3px rgba(22,163,74,.12); outline: none;
+}
+
+.aa-alert-success {
+    background: var(--g50); border: 1px solid var(--g200);
+    color: var(--g800); border-radius: 10px; padding: 14px 18px; font-size: 14px;
+}
+
+/* Info items (contato) */
+.aa-info-item {
+    background: rgba(255,255,255,.1); border-radius: 12px; padding: 16px 18px;
+    display: flex; align-items: center; gap: 14px;
+}
+.aa-info-icon  { font-size: 24px; flex-shrink: 0; }
+.aa-info-label { font-size: 11px; font-weight: 700; color: rgba(255,255,255,.6); text-transform: uppercase; letter-spacing: .5px; }
+.aa-info-value { font-size: 14px; font-weight: 600; color: #fff; }
+
+/* WhatsApp button */
+.aa-btn-whatsapp {
+    background: #25D366; color: #fff; border: none;
+    border-radius: 999px; font-size: 15px; font-weight: 700; padding: 13px 28px;
+    box-shadow: 0 6px 24px rgba(37,211,102,.35); transition: all .22s;
+}
+.aa-btn-whatsapp:hover {
+    background: #128C7E; color: #fff;
+    transform: translateY(-2px); box-shadow: 0 10px 32px rgba(37,211,102,.45);
+}
+
+/* =====================================================
+   FOOTER (verde escuro)
+   ===================================================== */
+.aa-footer { background: var(--g900); padding: 64px 0 0; }
+.aa-footer-link { font-size: 14px; color: rgba(255,255,255,.52); text-decoration: none; transition: color .2s; }
+.aa-footer-link:hover { color: rgba(255,255,255,.9); }
+.aa-footer-muted { color: rgba(255,255,255,.5); font-size: 13px; line-height: 1.7; }
+.aa-footer-copy  { color: rgba(255,255,255,.35); }
+.ls-1 { letter-spacing: 1px; }
+
+/* =====================================================
+   ANIMAÇÕES
+   ===================================================== */
+@keyframes aa-float {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-10px); }
+}
+@keyframes aa-pulse {
+    0%,100% { transform: scale(1);    opacity: 1; }
+    50%      { transform: scale(1.05); opacity: .7; }
+}
+
+/* =====================================================
+   RESPONSIVO
+   ===================================================== */
+@media (max-width: 992px) {
+    .aa-hero-visual { display: none; }
+    .aa-navbar .container { height: auto; padding-top: 12px; padding-bottom: 12px; flex-wrap: wrap; }
+    .aa-navbar .navbar-collapse {
+        background: var(--g700);
+        border-radius: 0 0 14px 14px;
+        padding: 12px 16px 18px;
+        margin: 8px -24px -12px;
+    }
+}
+@media (max-width: 768px) {
+    .aa-section, .aa-section-alt { padding: 64px 0; }
+    .aa-page-hero { padding: 80px 0 48px; }
+    .aa-hero { min-height: auto; padding: 90px 0 60px; }
+    .aa-whatsapp-card, .aa-contact-card { padding: 24px; }
+}
+@media (max-width: 480px) {
+    .aa-section, .aa-section-alt { padding: 48px 0; }
+    .aa-float-card { display: none; }
+}

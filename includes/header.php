@@ -1,8 +1,13 @@
 <?php
 // Vars esperadas: $pagina (string), $titulo_pagina (string)
-$pagina       = $pagina       ?? 'index';
+$pagina        = $pagina        ?? 'index';
 $titulo_pagina = $titulo_pagina ?? 'AgroAmigo';
 $animais_pages = ['bovinos','aves','suinos','caprinos','ovinos','peixes'];
+
+// Estado de auth para a navbar
+require_once __DIR__ . '/auth.php';
+session_init();
+$_nav_user = usuario_logado();
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -70,12 +75,59 @@ $animais_pages = ['bovinos','aves','suinos','caprinos','ovinos','peixes'];
                        href="fichas.php">Fichas</a>
                 </li>
 
+                <?php if ($_nav_user): ?>
+                <li class="nav-item">
+                    <a class="nav-link aa-nav-link <?= $pagina === 'conta' ? 'active' : '' ?>"
+                       href="minha-conta.php">Minha Conta</a>
+                </li>
+                <?php endif; ?>
+
             </ul>
 
-            <div class="d-flex gap-2 mt-3 mt-lg-0">
+            <div class="d-flex gap-2 mt-3 mt-lg-0 align-items-center">
+
+                <?php if ($_nav_user): ?>
+                    <!-- Logado -->
+                    <div class="dropdown">
+                        <button class="btn aa-btn-user dropdown-toggle d-flex align-items-center gap-2"
+                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i>
+                            <span class="d-none d-md-inline"><?= h(explode(' ', $_nav_user['nome'])[0]) ?></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end aa-dropdown">
+                            <li class="dropdown-header" style="font-size:11px;color:#9ca3af;padding:6px 16px 2px">
+                                <?= h($_nav_user['email']) ?>
+                            </li>
+                            <li><a class="dropdown-item aa-dropdown-item" href="minha-conta.php">
+                                <i class="bi bi-grid me-2"></i>Painel
+                            </a></li>
+                            <?php if ($_nav_user['role'] === 'admin'): ?>
+                            <li><a class="dropdown-item aa-dropdown-item" href="gestao/index.php">
+                                <i class="bi bi-shield-lock me-2"></i>Gestão (Admin)
+                            </a></li>
+                            <?php endif; ?>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item aa-dropdown-item" href="logout.php"
+                                   onclick="return confirm('Deseja sair?')">
+                                <i class="bi bi-box-arrow-right me-2"></i>Sair
+                            </a></li>
+                        </ul>
+                    </div>
+
+                <?php else: ?>
+                    <!-- Não logado -->
+                    <a href="login.php" class="btn aa-btn-nav-secondary">
+                        <i class="bi bi-person me-1"></i> Entrar
+                    </a>
+                    <a href="cadastro.php" class="btn aa-btn-nav-primary">
+                        <i class="bi bi-person-plus me-1"></i> Criar Conta
+                    </a>
+                <?php endif; ?>
+
                 <a href="contato.php" class="btn aa-btn-nav-primary">
                     <i class="bi bi-whatsapp me-1"></i> Falar com Técnico
                 </a>
+
             </div>
         </div>
 

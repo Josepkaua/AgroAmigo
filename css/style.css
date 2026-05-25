@@ -267,16 +267,16 @@ ul    { list-style: none; padding: 0; }
    ===================================================== */
 .aa-page-hero {
     background: var(--g900);
-    padding: 100px 0 60px; position: relative; overflow: hidden;
+    padding: 84px 0 20px; position: relative; overflow: hidden;
 }
 .aa-page-hero::before {
     content: '';
     position: absolute; inset: 0;
     background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(74,222,128,.1) 0%, transparent 70%);
 }
-.aa-page-emoji { font-size: 68px; display: block; margin-bottom: 14px; }
-.aa-page-title { font-size: clamp(1.9rem, 4vw, 3rem); font-weight: 800; color: #fff; letter-spacing: -1px; }
-.aa-page-desc  { font-size: 16px; color: rgba(255,255,255,.72); max-width: 540px; line-height: 1.7; }
+.aa-page-emoji { font-size: 38px; display: block; margin-bottom: 8px; }
+.aa-page-title { font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 800; color: #fff; letter-spacing: -.6px; }
+.aa-page-desc  { font-size: 14px; color: rgba(255,255,255,.68); max-width: 520px; line-height: 1.6; margin-top: 6px !important; }
 
 .aa-breadcrumb { display: flex; align-items: center; gap: 4px; }
 .aa-breadcrumb a    { color: rgba(255,255,255,.55); font-size: 13px; }
@@ -419,6 +419,213 @@ ul    { list-style: none; padding: 0; }
 }
 
 /* =====================================================
+   MODAL DE FICHAS
+   ===================================================== */
+.aa-modal-ficha .modal-content {
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,.35);
+}
+.aa-modal-ficha .modal-header {
+    background: var(--g800);
+    border-bottom: none;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.aa-modal-ficha .modal-title {
+    color: #fff;
+    font-weight: 700;
+    font-size: 15px;
+}
+.aa-modal-ficha .btn-close {
+    filter: invert(1);
+    opacity: .75;
+    flex-shrink: 0;
+}
+.aa-modal-ficha .btn-close:hover { opacity: 1; }
+.aa-modal-ficha .modal-body { padding: 0; }
+
+.aa-btn-modal-print {
+    background: rgba(255,255,255,.15);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.3);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    transition: background .2s;
+    white-space: nowrap;
+}
+.aa-btn-modal-print:hover { background: rgba(255,255,255,.25); color: #fff; }
+
+.aa-btn-modal-pdf {
+    background: #fff;
+    color: var(--g800);
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 14px;
+    transition: background .2s;
+    white-space: nowrap;
+}
+.aa-btn-modal-pdf:hover { background: var(--g50); color: var(--g800); }
+
+/* =====================================================
+   NAVBAR — botão Entrar / Criar Conta / user dropdown
+   ===================================================== */
+.aa-btn-nav-secondary {
+    background: rgba(255,255,255,.15);
+    color: #fff !important;
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 999px;
+    font-size: 13px; font-weight: 600; padding: 7px 18px;
+    transition: background .2s;
+    white-space: nowrap;
+}
+.aa-btn-nav-secondary:hover { background: rgba(255,255,255,.27); color: #fff !important; }
+
+.aa-btn-user {
+    background: rgba(255,255,255,.18);
+    color: #fff !important;
+    border: 1px solid rgba(255,255,255,.3);
+    border-radius: 999px;
+    font-size: 13px; font-weight: 600; padding: 6px 16px;
+    transition: background .2s;
+    white-space: nowrap;
+}
+.aa-btn-user:hover,
+.aa-btn-user:focus { background: rgba(255,255,255,.3); color: #fff !important; box-shadow: none !important; }
+.aa-btn-user::after { filter: brightness(0) invert(1); }
+
+/* =====================================================
+   PÁGINAS AUTH (login / cadastro)
+   ===================================================== */
+.aa-auth-wrap {
+    min-height: calc(100vh - 68px);
+    margin-top: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+    background: linear-gradient(135deg, var(--g50) 0%, #fff 60%, var(--g100) 100%);
+}
+.aa-auth-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 40px 36px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 8px 40px rgba(0,0,0,.10);
+}
+.aa-auth-logo {
+    font-size: 22px; font-weight: 400; color: var(--g700);
+    margin-bottom: 18px; display: block;
+}
+.aa-auth-logo strong { font-weight: 800; }
+.aa-auth-title { font-size: 22px; font-weight: 800; color: #111827; margin-bottom: 6px; }
+.aa-auth-sub { font-size: 14px; color: #6b7280; margin-bottom: 24px; }
+.aa-auth-footer { font-size: 13px; color: #6b7280; text-align: center; margin-top: 20px; }
+.aa-auth-footer a { color: var(--g600); font-weight: 600; }
+.aa-auth-footer a:hover { text-decoration: underline; }
+
+.aa-form-group { margin-bottom: 18px; }
+.aa-form-group label {
+    display: block; font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .5px;
+    color: #374151; margin-bottom: 6px;
+}
+.aa-form-input {
+    display: block; width: 100%;
+    border: 1.5px solid #e5e7eb; border-radius: 10px;
+    padding: 10px 14px; font-size: 14px; color: #1f2937;
+    font-family: var(--font); background: #fff;
+    transition: border-color .2s, box-shadow .2s; outline: none;
+}
+.aa-form-input:focus { border-color: var(--g500); box-shadow: 0 0 0 3px rgba(22,163,74,.12); }
+.aa-form-input::placeholder { color: #c4c9d1; }
+
+.aa-input-eye { position: relative; }
+.aa-input-eye .aa-form-input { padding-right: 40px; }
+.aa-eye-btn {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer; color: #9ca3af; padding: 4px;
+    font-size: 16px; line-height: 1;
+}
+.aa-eye-btn:hover { color: var(--g600); }
+
+.aa-form-hint { font-size: 11px; color: #9ca3af; margin-top: 4px; display: block; }
+
+.aa-btn-submit {
+    display: block; width: 100%;
+    background: var(--g700); color: #fff; border: none;
+    border-radius: 10px; padding: 12px;
+    font-size: 15px; font-weight: 700; font-family: var(--font);
+    cursor: pointer; transition: background .2s, transform .15s;
+    margin-top: 8px;
+}
+.aa-btn-submit:hover { background: var(--g800); transform: translateY(-1px); }
+
+.aa-alert { border-radius: 10px; padding: 12px 16px; font-size: 13px; margin-bottom: 18px; display: flex; align-items: flex-start; gap: 4px; }
+.aa-alert-danger  { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+.aa-alert-success { background: var(--g50); border: 1px solid var(--g200); color: var(--g800); }
+
+/* =====================================================
+   MINHA CONTA — painel do produtor
+   ===================================================== */
+.aa-stat-card {
+    background: #fff; border-radius: 14px; padding: 20px;
+    border: 1px solid #e5e7eb;
+    display: flex; align-items: center; gap: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+.aa-stat-icon { font-size: 26px; }
+.aa-stat-val { font-size: 26px; font-weight: 800; color: #111827; line-height: 1; }
+.aa-stat-label { font-size: 12px; color: #6b7280; margin-top: 3px; }
+
+.aa-card {
+    background: #fff; border-radius: 16px; padding: 22px;
+    border: 1px solid #e5e7eb; box-shadow: 0 2px 12px rgba(0,0,0,.06);
+}
+.aa-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.aa-card-title { font-size: 15px; font-weight: 800; color: #111827; margin-bottom: 2px; }
+.aa-card-sub { font-size: 12px; color: #9ca3af; }
+
+.aa-btn-sm {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--g700); color: #fff; border: none; border-radius: 8px;
+    padding: 7px 14px; font-size: 12px; font-weight: 700;
+    cursor: pointer; font-family: var(--font); white-space: nowrap;
+    transition: background .2s;
+}
+.aa-btn-sm:hover { background: var(--g800); color: #fff; }
+
+.aa-empty { text-align: center; padding: 32px; color: #9ca3af; font-size: 13px; }
+
+.aa-prop-list { display: flex; flex-direction: column; gap: 0; }
+.aa-prop-item {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 12px 0; border-bottom: 1px solid #f3f4f6;
+}
+.aa-prop-item:last-child { border-bottom: none; }
+.aa-prop-nome { font-size: 14px; font-weight: 700; color: #111827; }
+.aa-prop-meta { font-size: 12px; color: #9ca3af; margin-top: 2px; }
+.aa-prop-badges { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.aa-badge-animal { background: var(--g50); color: var(--g700); font-size: 11px; font-weight: 700; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+.aa-link-btn { font-size: 12px; font-weight: 700; color: var(--g600); display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+.aa-link-btn:hover { color: var(--g800); }
+
+.aa-mini-table { display: flex; flex-direction: column; gap: 0; }
+.aa-mini-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f3f4f6; }
+.aa-mini-row:last-child { border-bottom: none; }
+.aa-mini-main { font-size: 13px; font-weight: 600; color: #111827; }
+.aa-mini-sub { font-size: 11px; color: #9ca3af; margin-top: 1px; }
+.aa-mini-val { font-size: 15px; font-weight: 800; color: var(--g700); flex-shrink: 0; }
+
+/* =====================================================
    FOOTER (verde escuro)
    ===================================================== */
 .aa-footer { background: var(--g900); padding: 64px 0 0; }
@@ -455,7 +662,7 @@ ul    { list-style: none; padding: 0; }
 }
 @media (max-width: 768px) {
     .aa-section, .aa-section-alt { padding: 64px 0; }
-    .aa-page-hero { padding: 80px 0 48px; }
+    .aa-page-hero { padding: 76px 0 16px; }
     .aa-hero { min-height: auto; padding: 90px 0 60px; }
     .aa-whatsapp-card, .aa-contact-card { padding: 24px; }
 }

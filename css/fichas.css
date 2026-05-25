@@ -1,0 +1,424 @@
+/* =====================================================
+   FICHAS DE CONTROLE — AgroAmigo ATERPEC
+   Estilos para tela e impressão (A4)
+   ===================================================== */
+
+:root {
+    --g50:  #f0fdf4;
+    --g100: #dcfce7;
+    --g200: #bbf7d0;
+    --g600: #16a34a;
+    --g700: #15803d;
+    --g800: #166534;
+    --g900: #14532d;
+    --border: #e5e7eb;
+    --text:  #1f2937;
+    --muted: #6b7280;
+    --font:  'Inter', Arial, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); color: var(--text); background: #f3f4f6; font-size: 14px; -webkit-font-smoothing: antialiased; }
+a { text-decoration: none; color: inherit; }
+
+/* =====================================================
+   BARRA DE CONTROLE (somente tela)
+   ===================================================== */
+.fc-topbar {
+    background: var(--g800);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.fc-topbar-logo {
+    font-size: 18px;
+    font-weight: 400;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.fc-topbar-logo strong { font-weight: 800; }
+.fc-topbar-actions { display: flex; gap: 10px; }
+
+.fc-btn-back {
+    background: rgba(255,255,255,.15);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.3);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--font);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background .2s;
+}
+.fc-btn-back:hover { background: rgba(255,255,255,.25); color: #fff; }
+
+.fc-btn-print {
+    background: #fff;
+    color: var(--g800);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: var(--font);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background .2s;
+}
+.fc-btn-print:hover { background: var(--g50); }
+
+/* =====================================================
+   PÁGINA (wrapper)
+   ===================================================== */
+.fc-page {
+    max-width: 800px;
+    margin: 24px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0,0,0,.12);
+    overflow: hidden;
+}
+
+/* =====================================================
+   CABEÇALHO DA FICHA
+   ===================================================== */
+.fc-header {
+    background: var(--g800);
+    color: #fff;
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+.fc-header-logo {
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(255,255,255,.65);
+    margin-bottom: 6px;
+}
+.fc-header-logo strong { font-weight: 800; color: #fff; }
+.fc-header-title {
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -.4px;
+}
+.fc-header-subtitle {
+    font-size: 12px;
+    color: rgba(255,255,255,.6);
+    margin-top: 4px;
+}
+.fc-header-badge {
+    background: rgba(255,255,255,.13);
+    border: 1px solid rgba(255,255,255,.22);
+    border-radius: 8px;
+    padding: 10px 18px;
+    text-align: center;
+    flex-shrink: 0;
+}
+.fc-header-badge-label { font-size: 10px; color: rgba(255,255,255,.55); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+.fc-header-badge-value { font-size: 14px; font-weight: 700; }
+
+/* =====================================================
+   CORPO
+   ===================================================== */
+.fc-body { padding: 28px 32px; }
+
+.fc-section { margin-bottom: 26px; }
+.fc-section:last-child { margin-bottom: 0; }
+
+.fc-section-title {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: var(--g700);
+    border-bottom: 2px solid var(--g100);
+    padding-bottom: 7px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.fc-hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-style: italic;
+}
+
+/* =====================================================
+   CAMPOS
+   ===================================================== */
+.fc-row {
+    display: grid;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+.fc-row:last-child { margin-bottom: 0; }
+.fc-row.cols-1   { grid-template-columns: 1fr; }
+.fc-row.cols-2   { grid-template-columns: 1fr 1fr; }
+.fc-row.cols-3   { grid-template-columns: 1fr 1fr 1fr; }
+.fc-row.cols-4   { grid-template-columns: 1fr 1fr 1fr 1fr; }
+.fc-row.cols-1-2 { grid-template-columns: 1fr 2fr; }
+.fc-row.cols-2-1 { grid-template-columns: 2fr 1fr; }
+.fc-row.cols-1-3 { grid-template-columns: 1fr 3fr; }
+
+.fc-field {}
+.fc-field > label {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--muted);
+    margin-bottom: 4px;
+}
+
+.fc-input {
+    display: block;
+    width: 100%;
+    border: none;
+    border-bottom: 1.5px solid #374151;
+    padding: 3px 2px 4px;
+    font-family: var(--font);
+    font-size: 13px;
+    color: var(--text);
+    background: transparent;
+    outline: none;
+    min-height: 26px;
+    border-radius: 0;
+}
+.fc-input:focus { border-bottom-color: var(--g600); background: rgba(22,163,74,.03); }
+.fc-input::placeholder { color: #c4c9d1; font-size: 12px; }
+
+.fc-textarea {
+    display: block;
+    width: 100%;
+    border: 1.5px solid #d1d5db;
+    border-radius: 6px;
+    padding: 7px 10px;
+    font-family: var(--font);
+    font-size: 13px;
+    color: var(--text);
+    background: transparent;
+    outline: none;
+    resize: vertical;
+    min-height: 60px;
+    line-height: 1.6;
+}
+.fc-textarea:focus { border-color: var(--g600); }
+.fc-textarea::placeholder { color: #c4c9d1; font-size: 12px; }
+
+/* Checkboxes interativos */
+.fc-check-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 6px;
+}
+.fc-check-group.col { flex-direction: column; gap: 7px; }
+.fc-check-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    user-select: none;
+}
+.fc-check-item input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 17px;
+    height: 17px;
+    border: 1.5px solid #9ca3af;
+    border-radius: 4px;
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    background: #fff;
+    transition: border-color .15s, background .15s;
+    margin: 0;
+}
+.fc-check-item input[type="checkbox"]:hover { border-color: var(--g500); }
+.fc-check-item input[type="checkbox"]:checked {
+    background: var(--g600);
+    border-color: var(--g600);
+}
+.fc-check-item input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 1px;
+    width: 5px;
+    height: 9px;
+    border: 2px solid #fff;
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg);
+}
+
+/* Destaque de linha ativa na tabela */
+.fc-table tbody tr:focus-within td { background: rgba(22,163,74,.07) !important; }
+
+/* Campo de data — cursor de ponteiro */
+input[type="date"].fc-input,
+input[type="date"].fc-td-input { cursor: pointer; }
+
+/* Campo numérico — sem spinner */
+input[type="number"].fc-input,
+input[type="number"].fc-td-input { -moz-appearance: textfield; appearance: textfield; }
+input[type="number"].fc-input::-webkit-inner-spin-button,
+input[type="number"].fc-td-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+/* Campo de ganho calculado automaticamente */
+.fc-calc { color: var(--g700); font-weight: 700; font-style: italic; }
+
+/* =====================================================
+   TABELAS
+   ===================================================== */
+.fc-table-wrap {
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+.fc-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+.fc-table th {
+    background: var(--g50);
+    color: var(--g800);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    padding: 8px 10px;
+    border-bottom: 2px solid var(--g200);
+    text-align: left;
+    white-space: nowrap;
+}
+.fc-table th:not(:last-child) { border-right: 1px solid var(--g200); }
+.fc-table td {
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    padding: 0;
+    height: 30px;
+    vertical-align: middle;
+}
+.fc-table td:last-child { border-right: none; }
+.fc-table tr:last-child td { border-bottom: none; }
+.fc-table tr:nth-child(even) td { background: #fafafa; }
+
+.fc-td-input {
+    display: block;
+    width: 100%;
+    border: none;
+    padding: 4px 8px;
+    font-family: var(--font);
+    font-size: 12px;
+    color: var(--text);
+    background: transparent;
+    outline: none;
+    height: 30px;
+}
+.fc-td-input:focus { background: rgba(22,163,74,.06); }
+.fc-td-input::placeholder { color: #d1d5db; font-size: 11px; }
+
+/* =====================================================
+   RODAPÉ DA FICHA
+   ===================================================== */
+.fc-footer {
+    background: var(--g50);
+    border-top: 2px solid var(--g100);
+    padding: 12px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.fc-footer-text { font-size: 11px; color: var(--muted); }
+.fc-footer-label { font-size: 11px; font-weight: 700; color: var(--g700); }
+
+/* =====================================================
+   IMPRESSÃO
+   ===================================================== */
+@media print {
+    @page { size: A4; margin: 12mm 15mm; }
+
+    body { background: white !important; font-size: 12px; }
+    .fc-topbar { display: none !important; }
+
+    .fc-page {
+        max-width: 100%;
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+    .fc-header {
+        background: var(--g800) !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        padding: 18px 24px;
+    }
+    .fc-body { padding: 20px 24px; }
+    .fc-section { margin-bottom: 18px; }
+    .fc-section-title {
+        color: var(--g700) !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    .fc-table th {
+        background: var(--g50) !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    .fc-table tr:nth-child(even) td {
+        background: #fafafa !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    .fc-footer {
+        background: var(--g50) !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        padding: 10px 24px;
+    }
+    .fc-input { font-size: 12px; }
+    .fc-input::placeholder { color: transparent; }
+    .fc-textarea::placeholder { color: transparent; }
+    .fc-td-input::placeholder { color: transparent; }
+    .fc-row { gap: 10px; margin-bottom: 10px; }
+}
+
+/* =====================================================
+   RESPONSIVO
+   ===================================================== */
+@media (max-width: 600px) {
+    .fc-page { margin: 0; border-radius: 0; }
+    .fc-body { padding: 18px 16px; }
+    .fc-header { padding: 18px 16px; flex-direction: column; align-items: flex-start; }
+    .fc-header-badge { align-self: flex-start; }
+    .fc-footer { padding: 12px 16px; flex-direction: column; gap: 4px; align-items: flex-start; }
+    .fc-topbar { padding: 10px 16px; }
+    .fc-row.cols-2,
+    .fc-row.cols-3,
+    .fc-row.cols-4,
+    .fc-row.cols-1-2,
+    .fc-row.cols-2-1,
+    .fc-row.cols-1-3 { grid-template-columns: 1fr; }
+}

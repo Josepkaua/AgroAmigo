@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-Content \"c:\\\\xampp\\\\htdocs\\\\AgroAmigo\\\\css\\\\style.css\")",
+      "Bash(Measure-Object -Line)"
+    ]
+  }
+}

@@ -46,12 +46,17 @@ function is_admin(): bool
 }
 
 // ─── Guards ──────────────────────────────────────────────
-function require_login(string $redirect = '/login.php'): array
+function require_login(string $redirect = 'index.php'): array
 {
     $u = usuario_logado();
     if (!$u) {
-        $qs = http_build_query(['next' => $_SERVER['REQUEST_URI'] ?? '']);
-        header('Location: ' . $redirect . '?' . $qs);
+        // Guarda para onde o usuário queria ir, para redirecionar após login
+        $next = $_SERVER['REQUEST_URI'] ?? '';
+        if ($next) {
+            session_init();
+            $_SESSION['login_next'] = $next;
+        }
+        header('Location: ' . $redirect);
         exit;
     }
     return $u;

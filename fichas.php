@@ -1,4 +1,8 @@
 <?php
+declare(strict_types=1);
+require_once 'includes/auth.php';
+require_login('index.php');
+
 $pagina        = 'fichas';
 $titulo_pagina = 'Fichas de Controle';
 require 'includes/header.php';

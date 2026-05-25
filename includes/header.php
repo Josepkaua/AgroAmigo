@@ -25,7 +25,7 @@ $_nav_user = usuario_logado();
 <nav class="navbar navbar-expand-lg aa-navbar fixed-top" id="mainNav">
     <div class="container">
 
-        <a class="navbar-brand aa-logo" href="index.php">
+        <a class="navbar-brand aa-logo" href="home.php">
             <span>🌱</span> Agro<strong>Amigo</strong>
         </a>
 
@@ -39,8 +39,8 @@ $_nav_user = usuario_logado();
             <ul class="navbar-nav mx-auto gap-1">
 
                 <li class="nav-item">
-                    <a class="nav-link aa-nav-link <?= $pagina === 'index' ? 'active' : '' ?>"
-                       href="index.php">Início</a>
+                    <a class="nav-link aa-nav-link <?= $pagina === 'home' ? 'active' : '' ?>"
+                       href="home.php">Início</a>
                 </li>
 
                 <!-- Dropdown Animais -->
@@ -78,7 +78,7 @@ $_nav_user = usuario_logado();
                 <?php if ($_nav_user): ?>
                 <li class="nav-item">
                     <a class="nav-link aa-nav-link <?= $pagina === 'conta' ? 'active' : '' ?>"
-                       href="minha-conta.php">Minha Conta</a>
+                       href="index.php">Minha Conta</a>
                 </li>
                 <?php endif; ?>
 
@@ -98,7 +98,7 @@ $_nav_user = usuario_logado();
                             <li class="dropdown-header" style="font-size:11px;color:#9ca3af;padding:6px 16px 2px">
                                 <?= h($_nav_user['email']) ?>
                             </li>
-                            <li><a class="dropdown-item aa-dropdown-item" href="minha-conta.php">
+                            <li><a class="dropdown-item aa-dropdown-item" href="index.php">
                                 <i class="bi bi-grid me-2"></i>Painel
                             </a></li>
                             <?php if ($_nav_user['role'] === 'admin'): ?>

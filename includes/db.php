@@ -18,6 +18,8 @@ function db(): PDO
             PDO::ATTR_EMULATE_PREPARES   => false,
             PDO::ATTR_PERSISTENT         => false,
         ]);
+        // Retorna timestamps já no fuso de Brasília
+        $pdo->exec("SET TIMEZONE='America/Sao_Paulo'");
     } catch (PDOException $e) {
         error_log('[AgroAmigo] DB connection error: ' . $e->getMessage());
         http_response_code(503);

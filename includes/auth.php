@@ -1,5 +1,7 @@
 <?php
 declare(strict_types=1);
+// Fuso horário do Brasil (UTC-3 / America/Sao_Paulo)
+date_default_timezone_set('America/Sao_Paulo');
 require_once __DIR__ . '/functions.php';
 
 // ─── Sessão segura ───────────────────────────────────────

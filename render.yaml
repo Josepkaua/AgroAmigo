@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: agroamigo
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /login.php
+    envVars:
+      # ── Banco de dados (Supabase) ──────────────────────────
+      - key: DB_HOST
+        sync: false          # preencher no dashboard do Render
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_NAME
+        value: "postgres"
+      - key: DB_USER
+        value: "postgres"
+      - key: DB_PASS
+        sync: false          # preencher no dashboard do Render
+      - key: DB_SSL
+        value: "require"
+
+      # ── Supabase (opcional — só se usar a API REST) ────────
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+
+      # ── Aplicação ──────────────────────────────────────────
+      - key: APP_SECRET
+        generateValue: true  # Render gera uma chave segura automaticamente
+      - key: APP_URL
+        sync: false          # ex: https://agroamigo.onrender.com
+      - key: APP_ENV
+        value: "production"

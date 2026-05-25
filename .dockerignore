@@ -1,0 +1,18 @@
+# Credenciais locais — nunca vão para a imagem Docker
+config.php
+.env
+.env.local
+
+# Git e ferramentas de dev
+.git
+.gitignore
+.claude
+
+# Logs
+*.log
+
+# Docs
+*.md
+
+# Uploads de usuários (ephemeral no Render free tier de qualquer forma)
+uploads/fichas/*

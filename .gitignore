@@ -1,5 +1,7 @@
 config.php
 .env
+.env.local
 *.log
 /vendor/
 node_modules/
+.claude/

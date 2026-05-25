@@ -9,18 +9,20 @@ if (!$_fc_user) {
     exit;
 }
 
-$_fc_dados  = null;
-$_fc_salvo  = null;
-$pdo = db();
-$stmt = $pdo->prepare(
-    "SELECT dados, salvo_em FROM fichas_salvas WHERE usuario_id = :uid AND tipo = 'zootecnica'"
-);
-$stmt->execute(['uid' => $_fc_user['id']]);
-$rec = $stmt->fetch();
-if ($rec) {
-    $_fc_dados = json_decode($rec['dados'], true);
-    $_fc_salvo = date('d/m/Y H:i', strtotime($rec['salvo_em']));
-}
+$_fc_dados = null;
+$_fc_salvo = null;
+try {
+    $pdo  = db();
+    $stmt = $pdo->prepare(
+        "SELECT dados, salvo_em FROM fichas_salvas WHERE usuario_id = :uid AND tipo = 'zootecnica'"
+    );
+    $stmt->execute(['uid' => $_fc_user['id']]);
+    $rec = $stmt->fetch();
+    if ($rec) {
+        $_fc_dados = json_decode($rec['dados'], true);
+        $_fc_salvo = date('d/m/Y H:i', strtotime($rec['salvo_em']));
+    }
+} catch (PDOException) { /* tabela pendente de migration */ }
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">

@@ -29,7 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $user->fetch();
 
         if ($user) {
-            // Impede spam: só permite novo token a cada 5 minutos por usuário
             $recente = $pdo->prepare("
                 SELECT id FROM reset_senha
                 WHERE usuario_id = :uid AND criado_em > NOW() - INTERVAL '5 minutes' AND usado_em IS NULL
@@ -38,12 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $recente->execute(['uid' => $user['id']]);
 
             if (!$recente->fetch()) {
-                // Invalida tokens anteriores não usados
                 $pdo->prepare("
                     DELETE FROM reset_senha WHERE usuario_id = :uid AND usado_em IS NULL
                 ")->execute(['uid' => $user['id']]);
 
-                // Gera token — 32 bytes aleatórios, armazena só o hash
                 $token_raw  = bin2hex(random_bytes(32));
                 $token_hash = hash('sha256', $token_raw);
                 $expira_em  = date('Y-m-d H:i:s', strtotime('+1 hour'));
@@ -60,22 +57,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $link = APP_URL . '/resetar-senha.php?token=' . $token_raw;
                 enviar_email_reset($email, $user['nome'], $link);
-
                 log_acesso('reset_senha_solicitado', $user['id'], $email);
             }
         }
 
-        // Sempre a mesma mensagem (não revela se o e-mail existe)
         $mensagem = 'Se este e-mail estiver cadastrado, você receberá as instruções em breve.';
         $tipo_msg = 'success';
         $email_v  = '';
     }
 }
 
-/**
- * Envia o e-mail de reset.
- * Em produção, substitua pela integração com PHPMailer + SMTP.
- */
 function enviar_email_reset(string $para, string $nome, string $link): void
 {
     $primeiro = explode(' ', $nome)[0];
@@ -88,7 +79,6 @@ function enviar_email_reset(string $para, string $nome, string $link): void
               . "— Equipe AgroAmigo ATERPEC";
 
     $headers  = "From: AgroAmigo ATERPEC <noreply@agroamigo.com.br>\r\n";
-    $headers .= "Reply-To: noreply@agroamigo.com.br\r\n";
     $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 
     @mail($para, $assunto, $corpo, $headers);
@@ -101,84 +91,160 @@ function enviar_email_reset(string $para, string $nome, string $link): void
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Esqueci minha senha — AgroAmigo ATERPEC</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
+        :root{
+            --g50:#f0fdf4;--g100:#dcfce7;--g200:#bbf7d0;
+            --g600:#16a34a;--g700:#15803d;--g800:#166534;--g900:#14532d;
+        }
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        body{font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;background:#f0fdf4}
-        a{text-decoration:none;color:inherit}
-
-        .auth-left{
-            width:420px;flex-shrink:0;background:#fff;
-            display:flex;flex-direction:column;padding:40px 48px;
-            min-height:100vh;border-right:1px solid #e5e7eb;
+        body{
+            font-family:'Inter',system-ui,sans-serif;min-height:100vh;
+            background:var(--g900);
+            display:flex;align-items:center;justify-content:center;
+            padding:24px;
+            position:relative;overflow:hidden;
         }
-        .auth-right{
-            flex:1;
-            background-image:url('https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=1400&q=80&auto=format&fit=crop');
+        body::before{
+            content:'';position:fixed;inset:0;
+            background-image:url('https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=1600&q=60&auto=format&fit=crop');
             background-size:cover;background-position:center;
-            display:flex;flex-direction:column;align-items:center;justify-content:center;
-            padding:48px;position:relative;overflow:hidden;
-        }
-        .auth-right::before{
-            content:'';position:absolute;inset:0;
-            background:linear-gradient(135deg,rgba(22,101,52,.92) 0%,rgba(21,128,61,.85) 50%,rgba(20,83,45,.90) 100%);
+            opacity:.18;
         }
 
-        .auth-logo{font-size:22px;font-weight:400;color:#166534;margin-bottom:40px;display:flex;align-items:center;gap:8px}
-        .auth-logo strong{font-weight:800}
-        .auth-title{font-size:26px;font-weight:800;color:#111827;margin-bottom:6px}
-        .auth-sub{font-size:14px;color:#6b7280;margin-bottom:28px;line-height:1.6}
+        /* Card principal */
+        .card{
+            position:relative;z-index:1;
+            background:#fff;border-radius:28px;
+            width:100%;max-width:460px;
+            padding:48px 44px 40px;
+            box-shadow:0 32px 80px rgba(0,0,0,.35);
+        }
 
-        .form-label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#374151;margin-bottom:5px}
-        .form-group{margin-bottom:18px}
+        /* Topo */
+        .card-top{text-align:center;margin-bottom:36px}
+        .icon-ring{
+            width:76px;height:76px;border-radius:50%;margin:0 auto 20px;
+            background:linear-gradient(135deg,var(--g100),var(--g50));
+            border:2px solid var(--g200);
+            display:flex;align-items:center;justify-content:center;
+            font-size:34px;
+            box-shadow:0 8px 24px rgba(22,163,74,.18);
+        }
+        .card-title{font-size:22px;font-weight:800;color:#111827;margin-bottom:6px;letter-spacing:-.3px}
+        .card-sub{font-size:14px;color:#6b7280;line-height:1.65;max-width:320px;margin:0 auto}
+
+        /* Form */
+        .form-group{margin-bottom:20px}
+        .form-label{
+            display:block;font-size:11px;font-weight:700;
+            text-transform:uppercase;letter-spacing:.6px;color:#374151;margin-bottom:7px;
+        }
         .form-input{
-            display:block;width:100%;border:1.5px solid #e5e7eb;border-radius:10px;
-            padding:11px 14px;font-size:14px;color:#1f2937;font-family:inherit;
-            background:#fff;outline:none;transition:border-color .2s,box-shadow .2s;
+            display:block;width:100%;
+            border:2px solid #e5e7eb;border-radius:12px;
+            padding:13px 16px;font-size:15px;color:#1f2937;
+            font-family:inherit;background:#fafafa;outline:none;
+            transition:border-color .2s,box-shadow .2s,background .2s;
         }
-        .form-input:focus{border-color:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,.12)}
-        .form-input::placeholder{color:#c4c9d1}
-
-        .btn-submit{
-            display:block;width:100%;background:#166534;color:#fff;border:none;border-radius:10px;
-            padding:13px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;
-            transition:background .2s,transform .15s;margin-top:4px;
+        .form-input:focus{
+            border-color:var(--g600);
+            box-shadow:0 0 0 4px rgba(22,163,74,.1);
+            background:#fff;
         }
-        .btn-submit:hover{background:#14532d;transform:translateY(-1px)}
+        .form-input::placeholder{color:#d1d5db}
 
-        .alert{border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:20px;display:flex;align-items:flex-start;gap:8px}
-        .alert-danger {background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
-        .alert-success{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}
+        /* Botão */
+        .btn-primary{
+            display:flex;align-items:center;justify-content:center;gap:8px;
+            width:100%;background:linear-gradient(135deg,var(--g700),var(--g900));
+            color:#fff;border:none;border-radius:12px;
+            padding:14px;font-size:15px;font-weight:700;
+            font-family:inherit;cursor:pointer;
+            transition:opacity .2s,transform .15s;
+            box-shadow:0 4px 16px rgba(20,83,45,.35);
+        }
+        .btn-primary:hover{opacity:.92;transform:translateY(-1px)}
 
-        .auth-footer{font-size:13px;color:#6b7280;text-align:center;margin-top:24px}
-        .auth-footer a{color:#16a34a;font-weight:600}
-        .auth-footer a:hover{text-decoration:underline}
-        .auth-back{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:#9ca3af;margin-bottom:auto;margin-top:8px}
-        .auth-back:hover{color:#374151}
+        .btn-outline{
+            display:flex;align-items:center;justify-content:center;gap:8px;
+            width:100%;background:transparent;
+            color:var(--g800);border:2px solid var(--g200);border-radius:12px;
+            padding:13px;font-size:15px;font-weight:700;
+            font-family:inherit;cursor:pointer;text-decoration:none;
+            transition:all .2s;
+        }
+        .btn-outline:hover{background:var(--g50);border-color:var(--g300)}
 
-        .right-headline{font-size:28px;font-weight:800;color:#fff;line-height:1.3;text-align:center;position:relative;z-index:1}
-        .right-sub{font-size:15px;color:rgba(255,255,255,.75);text-align:center;margin-top:14px;max-width:340px;line-height:1.6;position:relative;z-index:1}
-        .right-icon{font-size:72px;margin-bottom:20px;position:relative;z-index:1}
+        /* Alert */
+        .alert{
+            border-radius:12px;padding:14px 16px;font-size:14px;
+            margin-bottom:24px;display:flex;align-items:flex-start;gap:10px;
+            line-height:1.5;
+        }
+        .alert-danger {background:#fef2f2;border:1.5px solid #fecaca;color:#991b1b}
+        .alert-success{background:#f0fdf4;border:1.5px solid var(--g200);color:var(--g800)}
+        .alert i{flex-shrink:0;margin-top:2px;font-size:16px}
 
-        @media(max-width:800px){.auth-right{display:none}.auth-left{width:100%;border:none}}
-        @media(max-width:480px){.auth-left{padding:28px 24px}}
+        /* Rodapé do card */
+        .card-footer{
+            display:flex;align-items:center;justify-content:center;gap:16px;
+            margin-top:28px;padding-top:24px;
+            border-top:1px solid #f3f4f6;
+        }
+        .link-muted{font-size:13px;color:#9ca3af;display:flex;align-items:center;gap:5px;text-decoration:none}
+        .link-muted:hover{color:#374151}
+        .link-green{font-size:13px;color:var(--g600);font-weight:600;text-decoration:none}
+        .link-green:hover{text-decoration:underline}
+        .sep{width:1px;height:16px;background:#e5e7eb}
+
+        /* Passos informativos (abaixo do card) */
+        .steps{
+            position:relative;z-index:1;
+            display:flex;gap:20px;justify-content:center;flex-wrap:wrap;
+            margin-top:24px;
+        }
+        .step{
+            background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
+            border-radius:12px;padding:12px 16px;
+            display:flex;align-items:center;gap:10px;
+            backdrop-filter:blur(8px);
+        }
+        .step-num{
+            width:28px;height:28px;border-radius:50%;
+            background:rgba(255,255,255,.2);color:#fff;
+            font-size:12px;font-weight:800;
+            display:flex;align-items:center;justify-content:center;flex-shrink:0;
+        }
+        .step-txt{font-size:12px;color:rgba(255,255,255,.85);font-weight:500;line-height:1.4}
+
+        @media(max-width:500px){
+            .card{padding:36px 24px 32px}
+            .steps{display:none}
+        }
     </style>
 </head>
 <body>
 
-<div class="auth-left">
-    <div class="auth-logo">🌱 Agro<strong>Amigo</strong></div>
+<div style="display:flex;flex-direction:column;align-items:center;width:100%">
 
-    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;max-width:340px;width:100%">
+    <!-- Logo acima do card -->
+    <a href="index.php" style="position:relative;z-index:1;color:#fff;text-decoration:none;font-size:20px;font-weight:400;margin-bottom:24px;display:flex;align-items:center;gap:8px">
+        🌱 Agro<strong>Amigo</strong>
+    </a>
 
-        <h1 class="auth-title">Esqueci minha senha</h1>
-        <p class="auth-sub">
-            Digite seu e-mail cadastrado e enviaremos um link para criar uma nova senha.
-        </p>
+    <div class="card">
+        <div class="card-top">
+            <div class="icon-ring">📧</div>
+            <div class="card-title">Recuperar acesso</div>
+            <p class="card-sub">
+                Digite seu e-mail e enviaremos um link seguro para criar uma nova senha.
+            </p>
+        </div>
 
         <?php if ($mensagem): ?>
         <div class="alert alert-<?= $tipo_msg ?>">
-            <i class="bi bi-<?= $tipo_msg === 'success' ? 'check-circle-fill' : 'exclamation-triangle-fill' ?>" style="flex-shrink:0;margin-top:1px"></i>
+            <i class="bi bi-<?= $tipo_msg === 'success' ? 'check-circle-fill' : 'exclamation-triangle-fill' ?>"></i>
             <span><?= h($mensagem) ?></span>
         </div>
         <?php endif; ?>
@@ -188,42 +254,50 @@ function enviar_email_reset(string $para, string $nome, string $link): void
             <?= csrf_field() ?>
 
             <div class="form-group">
-                <label class="form-label" for="email">E-mail</label>
+                <label class="form-label" for="email">E-mail cadastrado</label>
                 <input type="email" id="email" name="email"
                        value="<?= h($email_v) ?>"
                        class="form-input" placeholder="seu@email.com"
                        required autocomplete="email" autofocus>
             </div>
 
-            <button type="submit" class="btn-submit">
-                <i class="bi bi-send me-2"></i>Enviar link de redefinição
+            <button type="submit" class="btn-primary">
+                <i class="bi bi-send-fill"></i>
+                Enviar link de redefinição
             </button>
         </form>
         <?php else: ?>
-        <a href="login.php" class="btn-submit" style="text-align:center;display:block">
-            <i class="bi bi-box-arrow-in-right me-2"></i>Voltar ao login
+        <a href="login.php" class="btn-outline">
+            <i class="bi bi-box-arrow-in-right"></i>
+            Ir para o login
         </a>
         <?php endif; ?>
 
-        <div class="auth-footer">
-            Lembrou a senha? <a href="login.php">Entrar</a>
+        <div class="card-footer">
+            <a href="index.php" class="link-muted"><i class="bi bi-arrow-left"></i> Início</a>
+            <div class="sep"></div>
+            <a href="login.php" class="link-green">Entrar na conta</a>
+            <div class="sep"></div>
+            <a href="cadastro.php" class="link-green">Criar conta</a>
         </div>
-
     </div>
 
-    <a href="index.php" class="auth-back">
-        <i class="bi bi-arrow-left"></i> Voltar ao site
-    </a>
-</div>
+    <!-- Passos -->
+    <div class="steps">
+        <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-txt">Digite seu e-mail</div>
+        </div>
+        <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-txt">Acesse o link enviado</div>
+        </div>
+        <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-txt">Crie uma nova senha</div>
+        </div>
+    </div>
 
-<div class="auth-right">
-    <div class="right-icon">🔑</div>
-    <div class="right-headline">Recupere o acesso<br>à sua conta</div>
-    <p class="right-sub">
-        Enviaremos um link seguro para o seu e-mail.
-        O link expira em 1 hora e só pode ser usado uma vez.
-    </p>
 </div>
-
 </body>
 </html>

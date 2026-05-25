@@ -5,14 +5,17 @@ $usuario = require_login('index.php');
 
 // Fichas salvas deste usuário
 $pdo = db();
-$stmt = $pdo->prepare(
-    "SELECT tipo, salvo_em FROM fichas_salvas WHERE usuario_id = :uid ORDER BY salvo_em DESC"
-);
-$stmt->execute(['uid' => $usuario['id']]);
-$fichas_salvas = $stmt->fetchAll();
 $salvas_por_tipo = [];
-foreach ($fichas_salvas as $fs) {
-    $salvas_por_tipo[$fs['tipo']] = $fs['salvo_em'];
+try {
+    $stmt = $pdo->prepare(
+        "SELECT tipo, salvo_em FROM fichas_salvas WHERE usuario_id = :uid ORDER BY salvo_em DESC"
+    );
+    $stmt->execute(['uid' => $usuario['id']]);
+    foreach ($stmt->fetchAll() as $fs) {
+        $salvas_por_tipo[$fs['tipo']] = $fs['salvo_em'];
+    }
+} catch (PDOException) {
+    // Tabela ainda não criada — aguardando migration
 }
 
 $pagina        = 'fichas';
@@ -72,7 +75,7 @@ $fichas_disponiveis = [
     </div>
 </section>
 
-<?php if ($fichas_salvas): ?>
+<?php if ($salvas_por_tipo): ?>
 <!-- FICHAS SALVAS -->
 <section class="aa-section" style="padding-bottom:0">
     <div class="container">
@@ -96,10 +99,10 @@ $fichas_disponiveis = [
                 'mortalidade'=> 'fichas/mortalidade.php',
                 'controle'   => 'fichas/controle.php',
             ];
-            foreach ($fichas_salvas as $fs):
-                [$ico, $nome_tipo] = $nomes_tipo[$fs['tipo']] ?? ['📄', $fs['tipo']];
-                $url_tipo = $urls_tipo[$fs['tipo']] ?? '#';
-                $salvo = date('d/m/Y H:i', strtotime($fs['salvo_em']));
+            foreach ($salvas_por_tipo as $tipo => $salvo_em):
+                [$ico, $nome_tipo] = $nomes_tipo[$tipo] ?? ['📄', $tipo];
+                $url_tipo = $urls_tipo[$tipo] ?? '#';
+                $salvo = date('d/m/Y H:i', strtotime($salvo_em));
             ?>
             <div class="col-sm-6 col-lg-3">
                 <div class="aa-saved-ficha-card">

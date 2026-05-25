@@ -221,7 +221,12 @@ $flash = get_flash();
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="senha">Senha</label>
+                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
+                    <label class="form-label" for="senha" style="margin-bottom:0">Senha</label>
+                    <a href="esqueci-senha.php" style="font-size:12px;color:#16a34a;font-weight:600;text-decoration:none">
+                        Esqueci minha senha
+                    </a>
+                </div>
                 <div class="input-wrap">
                     <input type="password" id="senha" name="senha"
                            class="form-input" placeholder="••••••••"

@@ -15,6 +15,33 @@ $uid_f  = trim($_GET['uid']  ?? '');
 
 // ── Acesso ───────────────────────────────────────────────
 if ($aba === 'acesso') {
+    // Dados para o gráfico de linha — últimos 30 dias
+    $grafico_raw = $pdo->query("
+        SELECT
+            DATE(created_at AT TIME ZONE 'America/Sao_Paulo') AS dia,
+            COUNT(*) FILTER (WHERE acao = 'login_ok')     AS logins_ok,
+            COUNT(*) FILTER (WHERE acao = 'login_falhou') AS falhas
+        FROM logs_acesso
+        WHERE created_at >= NOW() - INTERVAL '30 days'
+        GROUP BY DATE(created_at AT TIME ZONE 'America/Sao_Paulo')
+        ORDER BY dia ASC
+    ")->fetchAll();
+
+    // Preenche dias sem registros com zero
+    $grafico_map = [];
+    foreach ($grafico_raw as $g) {
+        $grafico_map[$g['dia']] = $g;
+    }
+    $grafico_labels   = [];
+    $grafico_ok       = [];
+    $grafico_falhas   = [];
+    for ($d = 29; $d >= 0; $d--) {
+        $dia = date('Y-m-d', strtotime("-{$d} days"));
+        $grafico_labels[] = date('d/m', strtotime($dia));
+        $grafico_ok[]     = (int)($grafico_map[$dia]['logins_ok']  ?? 0);
+        $grafico_falhas[] = (int)($grafico_map[$dia]['falhas']     ?? 0);
+    }
+
     $where  = '1=1';
     $params = [];
     if ($ip_f)   { $where .= ' AND la.ip    = :ip';   $params['ip']   = $ip_f; }
@@ -94,6 +121,75 @@ require '_layout.php';
 </div>
 
 <?php if ($aba === 'acesso'): ?>
+
+<!-- Gráfico de linha — acessos dos últimos 30 dias -->
+<div class="g-card" style="margin-bottom:20px">
+    <div class="g-card-head">
+        <div class="g-card-title">📈 Acessos — últimos 30 dias</div>
+    </div>
+    <div style="padding:20px">
+        <canvas id="graficoAcessos" height="90"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+(function () {
+    const labels  = <?= json_encode($grafico_labels) ?>;
+    const ok      = <?= json_encode($grafico_ok) ?>;
+    const falhas  = <?= json_encode($grafico_falhas) ?>;
+
+    new Chart(document.getElementById('graficoAcessos'), {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'Logins com sucesso',
+                    data: ok,
+                    borderColor: '#16a34a',
+                    backgroundColor: 'rgba(22,163,74,.08)',
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    pointHoverRadius: 5,
+                    tension: 0.3,
+                    fill: true,
+                },
+                {
+                    label: 'Tentativas falhas',
+                    data: falhas,
+                    borderColor: '#dc2626',
+                    backgroundColor: 'rgba(220,38,38,.06)',
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    pointHoverRadius: 5,
+                    tension: 0.3,
+                    fill: true,
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { position: 'top', labels: { font: { size: 12 } } },
+                tooltip: { bodyFont: { size: 12 } },
+            },
+            scales: {
+                x: {
+                    ticks: { font: { size: 11 }, maxRotation: 0 },
+                    grid: { color: 'rgba(0,0,0,.05)' },
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: { font: { size: 11 }, precision: 0 },
+                    grid: { color: 'rgba(0,0,0,.05)' },
+                },
+            },
+        },
+    });
+})();
+</script>
 
 <!-- Filtros acesso -->
 <form method="GET" action="logs.php" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">

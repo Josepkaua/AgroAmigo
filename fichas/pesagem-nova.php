@@ -13,14 +13,14 @@ if (!$usuario || $_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // CSRF manual (requisição AJAX)
 $token = $_POST['_csrf'] ?? '';
-if (!$token || $token !== ($_SESSION['_csrf_token'] ?? '')) {
+if (!$token || !hash_equals($_SESSION['csrf'] ?? '', $token)) {
     http_response_code(403);
     echo json_encode(['ok' => false, 'erro' => 'Token inválido']);
     exit;
 }
 
 $pdo       = db();
-$animal_id = (int)($_POST['animal_id']   ?? 0);
+$animal_id = trim($_POST['animal_id']   ?? '');
 $data      = trim($_POST['data_pesagem'] ?? '');
 $peso      = trim($_POST['peso_kg']      ?? '');
 $obs       = trim($_POST['observacoes']  ?? '');
@@ -43,7 +43,7 @@ if (!$chk->fetch()) {
 }
 
 $pdo->prepare("
-    INSERT INTO pesagens (animal_id, data_pesagem, peso_kg, observacoes)
+    INSERT INTO pesagens (animal_id, data_pesagem, peso_kg, observacao)
     VALUES (:aid, :d, :p, :o)
 ")->execute([
     'aid' => $animal_id,

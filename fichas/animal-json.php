@@ -31,13 +31,13 @@ if (!$animal) {
 }
 
 $pes = $pdo->prepare("
-    SELECT id, data_pesagem, peso_kg, observacoes
+    SELECT id, data_pesagem, peso_kg, observacao
     FROM pesagens WHERE animal_id = :id ORDER BY data_pesagem DESC LIMIT 50
 ");
 $pes->execute(['id' => $id]);
 
 $vac = $pdo->prepare("
-    SELECT id, vacina, data_aplicacao, lote, data_reforco
+    SELECT id, nome_vacina, data_aplicacao, lote, proximo_reforco
     FROM vacinacoes WHERE animal_id = :id ORDER BY data_aplicacao DESC LIMIT 50
 ");
 $vac->execute(['id' => $id]);

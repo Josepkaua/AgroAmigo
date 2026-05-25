@@ -5,7 +5,7 @@ $usuario = require_login('login.php');
 $pdo = db();
 
 $form_erro    = '';
-$auto_open_id = (int)($_GET['animal'] ?? 0);
+$auto_open_id = $_GET['animal'] ?? '';
 
 // ── POST: criar novo animal ─────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_acao'] ?? '') === 'novo_animal') {
@@ -25,14 +25,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['_acao'] ?? '') === 'novo_a
     } elseif (!$chk->fetch()) {
         $form_erro = 'Propriedade inválida.';
     } else {
-        $pdo->prepare("
-            INSERT INTO animais (propriedade_id, brinco, especie, raca, data_nascimento, peso_nascimento, status)
+        $stmt_ins = $pdo->prepare("
+            INSERT INTO animais (propriedade_id, brinco, especie, raca, data_nascimento, peso_nascimento_kg, status)
             VALUES (:p, :b, :e, :r, :dn, :pn, 'ativo')
-        ")->execute([
+            RETURNING id
+        ");
+        $stmt_ins->execute([
             'p' => $prop_id, 'b' => $brinco, 'e' => $especie,
             'r' => $raca ?: null, 'dn' => $data_nasc, 'pn' => $peso_nasc,
         ]);
-        $novo_id = (int)$pdo->lastInsertId();
+        $novo_id = $stmt_ins->fetchColumn();
         flash('success', "Animal \"{$brinco}\" cadastrado com sucesso!");
         header("Location: fichas.php?animal={$novo_id}");
         exit;
@@ -372,7 +374,7 @@ function espEmoji(string $esp): string {
         <?php else: ?>
         <?php foreach ($animais as $a): ?>
         <div class="fa-row" tabindex="0" role="button"
-             data-id="<?= (int)$a['id'] ?>"
+             data-id="<?= h($a['id']) ?>"
              data-esp="<?= h(strtolower($a['especie'])) ?>"
              data-q="<?= h(strtolower($a['brinco'] . ' ' . ($a['raca'] ?? ''))) ?>"
              aria-label="Ver ficha de <?= h($a['brinco']) ?>">
@@ -509,8 +511,8 @@ function espEmoji(string $esp): string {
 <?php require 'includes/footer.php'; ?>
 
 <script>
-const CSRF       = <?= json_encode($_SESSION['_csrf_token'] ?? '') ?>;
-const AUTO_OPEN  = <?= $auto_open_id ?>;
+const CSRF       = <?= json_encode(csrf_token()) ?>;
+const AUTO_OPEN  = <?= json_encode($auto_open_id) ?>;
 let   CUR_ANIMAL = null;
 
 /* ── Utils ─────────────────────────────────────────────── */
@@ -570,7 +572,7 @@ function renderDetail(d) {
         ['Raça',       a.raca||'—'],
         ['Propriedade',a.prop_nome],
         ['Nascimento', fmtDate(a.data_nascimento)],
-        ['Peso nasc.', a.peso_nascimento ? a.peso_nascimento+' kg' : '—'],
+        ['Peso nasc.', a.peso_nascimento_kg ? a.peso_nascimento_kg+' kg' : '—'],
     ].map(([l,v]) =>
         `<div class="fa-info-item"><div class="fa-info-lbl">${l}</div><div class="fa-info-val">${esc(v)}</div></div>`
     ).join('');
@@ -586,7 +588,7 @@ function renderPes(rows) {
             `<div class="fa-rec-row">
                 <div>
                     <div class="fa-rec-main">${fmtDate(r.data_pesagem)}</div>
-                    ${r.observacoes?`<div class="fa-rec-sub">${esc(r.observacoes)}</div>`:''}
+                    ${r.observacao?`<div class="fa-rec-sub">${esc(r.observacao)}</div>`:''}
                 </div>
                 <div class="fa-rec-val">${parseFloat(r.peso_kg).toFixed(1).replace('.',',')} kg</div>
             </div>`).join('')
@@ -598,10 +600,10 @@ function renderVac(rows) {
         ? rows.map(r =>
             `<div class="fa-rec-row">
                 <div>
-                    <div class="fa-rec-main">${esc(r.vacina)}</div>
+                    <div class="fa-rec-main">${esc(r.nome_vacina)}</div>
                     <div class="fa-rec-sub">
                         ${fmtDate(r.data_aplicacao)}
-                        ${r.data_reforco?' · Reforço: '+fmtDate(r.data_reforco):''}
+                        ${r.proximo_reforco?' · Reforço: '+fmtDate(r.proximo_reforco):''}
                         ${r.lote?' · Lote: '+esc(r.lote):''}
                     </div>
                 </div>
@@ -685,5 +687,5 @@ document.querySelectorAll('#fa-items .fa-row').forEach(r => {
 });
 
 /* ── Auto-abrir via URL ─────────────────────────────────── */
-if (AUTO_OPEN > 0) goDetail(AUTO_OPEN);
+if (AUTO_OPEN) goDetail(AUTO_OPEN);
 </script>

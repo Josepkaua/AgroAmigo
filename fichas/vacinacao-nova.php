@@ -12,14 +12,14 @@ if (!$usuario || $_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $token = $_POST['_csrf'] ?? '';
-if (!$token || $token !== ($_SESSION['_csrf_token'] ?? '')) {
+if (!$token || !hash_equals($_SESSION['csrf'] ?? '', $token)) {
     http_response_code(403);
     echo json_encode(['ok' => false, 'erro' => 'Token inválido']);
     exit;
 }
 
 $pdo       = db();
-$animal_id = (int)($_POST['animal_id']      ?? 0);
+$animal_id = trim($_POST['animal_id']      ?? '');
 $vacina    = trim($_POST['vacina']          ?? '');
 $data      = trim($_POST['data_aplicacao']  ?? '');
 $lote      = trim($_POST['lote']            ?? '');
@@ -42,7 +42,7 @@ if (!$chk->fetch()) {
 }
 
 $pdo->prepare("
-    INSERT INTO vacinacoes (animal_id, vacina, data_aplicacao, lote, data_reforco)
+    INSERT INTO vacinacoes (animal_id, nome_vacina, data_aplicacao, lote, proximo_reforco)
     VALUES (:aid, :v, :d, :l, :r)
 ")->execute([
     'aid' => $animal_id,

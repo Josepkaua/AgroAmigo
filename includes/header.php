@@ -92,7 +92,7 @@ $_nav_user = usuario_logado();
                         <button class="btn aa-btn-user dropdown-toggle d-flex align-items-center gap-2"
                                 type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-person-circle"></i>
-                            <span class="d-none d-md-inline"><?= h(explode(' ', $_nav_user['nome'])[0]) ?></span>
+                            <span class="d-none d-md-inline"><?= h(ucfirst(mb_strtolower(explode(' ', $_nav_user['nome'])[0]))) ?></span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end aa-dropdown">
                             <li class="dropdown-header" style="font-size:11px;color:#9ca3af;padding:6px 16px 2px">

@@ -12,7 +12,7 @@ if (!$usuario) {
 }
 
 $pdo = db();
-$id  = (int)($_GET['id'] ?? 0);
+$id  = trim($_GET['id'] ?? '');
 
 // Verifica que o animal pertence ao usuário
 $stmt = $pdo->prepare("

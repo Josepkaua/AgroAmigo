@@ -55,11 +55,44 @@ if ($_usuario) {
     require 'includes/header.php';
 ?>
 
-<section class="aa-page-hero" style="padding:56px 0 28px;">
+<?php
+$_dias   = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+$_meses  = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+$_hoje   = $_dias[date('w')] . ', ' . date('d') . ' de ' . $_meses[(int)date('n')];
+$_nome1  = ucfirst(mb_strtolower(explode(' ', $_usuario['nome'])[0]));
+$_ini    = mb_strtoupper(mb_substr($_usuario['nome'], 0, 1));
+$_hora   = (int)date('H');
+$_saud   = $_hora < 12 ? 'Bom dia' : ($_hora < 18 ? 'Boa tarde' : 'Boa noite');
+?>
+<section style="background:linear-gradient(135deg,#166534 0%,#15803d 55%,#14532d 100%);padding:32px 0 28px;">
     <div class="container">
-        <p class="aa-page-emoji" style="font-size:32px;">👋</p>
-        <h1 class="aa-page-title">Olá, <?= h(explode(' ', $_usuario['nome'])[0]) ?>!</h1>
-        <p class="aa-page-sub">Seu painel zootécnico · AgroAmigo ATERPEC</p>
+        <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+
+            <!-- Avatar com inicial -->
+            <div style="width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;flex-shrink:0;letter-spacing:0">
+                <?= h($_ini) ?>
+            </div>
+
+            <!-- Texto -->
+            <div style="flex:1;min-width:0">
+                <p style="color:rgba(255,255,255,.6);font-size:12px;font-weight:500;margin:0 0 3px;letter-spacing:.4px;text-transform:uppercase">
+                    <?= h($_hoje) ?>
+                </p>
+                <h1 style="font-size:clamp(20px,4vw,28px);font-weight:800;color:#fff;margin:0 0 4px;line-height:1.2">
+                    <?= h($_saud) ?>, <?= h($_nome1) ?>! 👋
+                </h1>
+                <p style="color:rgba(255,255,255,.65);font-size:13px;margin:0">
+                    Seu painel zootécnico · AgroAmigo ATERPEC
+                </p>
+            </div>
+
+            <!-- Botão rápido -->
+            <a href="fichas.php" style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:10px;padding:10px 18px;color:#fff;font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap;transition:background .2s"
+               onmouseover="this.style.background='rgba(255,255,255,.22)'"
+               onmouseout="this.style.background='rgba(255,255,255,.15)'">
+                <i class="bi bi-file-earmark-text"></i> Fichas
+            </a>
+        </div>
     </div>
 </section>
 

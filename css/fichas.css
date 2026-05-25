@@ -80,6 +80,51 @@ a { text-decoration: none; color: inherit; }
 }
 .fc-btn-print:hover { background: var(--g50); }
 
+/* Botão Salvar */
+.fc-btn-save {
+    background: var(--g600);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: var(--font);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background .2s, opacity .2s;
+}
+.fc-btn-save:hover    { background: var(--g700); }
+.fc-btn-save:disabled { opacity: .65; cursor: not-allowed; }
+
+/* Indicador de último salvamento */
+.fc-saved-at {
+    font-size: 11px;
+    color: rgba(255,255,255,.6);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* Toast de notificação */
+.fc-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 4px 24px rgba(0,0,0,.18);
+    pointer-events: none;
+    transition: opacity .4s;
+    max-width: 300px;
+}
+.fc-toast-success { background: #166534; color: #fff; }
+.fc-toast-danger  { background: #991b1b; color: #fff; }
+
 /* =====================================================
    PÁGINA (wrapper)
    ===================================================== */

@@ -9,11 +9,12 @@ $titulo_pagina = 'Aves';
 $animal = [
     'nome'     => 'Aves',
     'emoji'    => '🐔',
+    'imagem'   => 'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=1400&q=80&auto=format&fit=crop',
     'descricao'=> 'Orientações para criação de galinhas caipiras, poedeiras e outras aves de quintal no Maranhão, sistema muito presente na agricultura familiar da região.',
     'racas' => [
-        ['emoji'=>'🐔','nome'=>'Galinha Caipira (SRD)','tipo'=>'Corte/Ovos','desc'=>'Sem Raça Definida, altamente adaptada às condições do Nordeste. Rusticamente resistente a parasitas e calor. Produção de 150 a 200 ovos/ano.'],
-        ['emoji'=>'🥚','nome'=>'ISA Brown',             'tipo'=>'Poedeira',  'desc'=>'Raça comercial de alta produtividade. Produz até 320 ovos/ano com boa alimentação. Pode ser usada em sistema semi-intensivo com piquete.'],
-        ['emoji'=>'🐓','nome'=>'Pescoço Pelado',        'tipo'=>'Corte/Ovos','desc'=>'Variedade caipira com maior tolerância ao calor tropical. Boa para regiões quentes do Maranhão. Produção mista de ovos e carne.'],
+        ['emoji'=>'🐔','nome'=>'Galinha Caipira (SRD)','tipo'=>'Corte/Ovos','imagem'=>'https://images.unsplash.com/photo-1588597989061-b60ad0eefdbf?w=600&q=80&auto=format&fit=crop','desc'=>'Sem Raça Definida, altamente adaptada às condições do Nordeste. Rusticamente resistente a parasitas e calor. Produção de 150 a 200 ovos/ano.'],
+        ['emoji'=>'🥚','nome'=>'ISA Brown',             'tipo'=>'Poedeira',  'imagem'=>'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=600&q=80&auto=format&fit=crop','desc'=>'Raça comercial de alta produtividade. Produz até 320 ovos/ano com boa alimentação. Pode ser usada em sistema semi-intensivo com piquete.'],
+        ['emoji'=>'🐓','nome'=>'Pescoço Pelado',        'tipo'=>'Corte/Ovos','imagem'=>'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=600&q=80&auto=format&fit=crop&h=300','desc'=>'Variedade caipira com maior tolerância ao calor tropical. Boa para regiões quentes do Maranhão. Produção mista de ovos e carne.'],
     ],
     'topicos' => [
         [

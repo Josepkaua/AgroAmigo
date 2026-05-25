@@ -239,19 +239,20 @@ if ($_usuario) {
         /* HERO */
         .lp-hero{
             min-height:100vh;
-            background:linear-gradient(150deg,var(--g700) 0%,var(--g800) 40%,var(--g900) 100%);
+            background-image:url('https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=1600&q=80&auto=format&fit=crop');
+            background-size:cover;background-position:center;
             display:flex;align-items:center;
             padding:80px 0 60px;
             position:relative;overflow:hidden;
         }
         .lp-hero::before{
             content:'';position:absolute;inset:0;
-            background:url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M40 0C17.9 0 0 17.9 0 40s17.9 40 40 40 40-17.9 40-40S62.1 0 40 0zm0 72C22.3 72 8 57.7 8 40S22.3 8 40 8s32 14.3 32 32-14.3 32-32 32z'/%3E%3C/g%3E%3C/svg%3E");
+            background:linear-gradient(135deg,rgba(14,52,27,.92) 0%,rgba(20,83,45,.85) 50%,rgba(14,52,27,.90) 100%);
         }
         .lp-hero::after{
             content:'';position:absolute;right:-200px;bottom:-200px;
             width:600px;height:600px;border-radius:50%;
-            background:radial-gradient(circle,rgba(255,255,255,.06) 0%,transparent 70%);
+            background:radial-gradient(circle,rgba(255,255,255,.04) 0%,transparent 70%);
         }
         .lp-badge{
             display:inline-flex;align-items:center;gap:6px;
@@ -283,6 +284,9 @@ if ($_usuario) {
         .lp-hero-meta{display:flex;flex-wrap:wrap;gap:20px;align-items:center;font-size:13px;color:rgba(255,255,255,.65)}
         .lp-hero-meta-item{display:flex;align-items:center;gap:6px}
         .lp-hero-meta-item i{color:var(--g200);font-size:16px}
+
+        /* Garante que o conteúdo fique acima do overlay ::before */
+        .lp-hero > .container{position:relative;z-index:1}
 
         /* Hero visual card */
         .lp-hero-visual{
@@ -538,9 +542,12 @@ if ($_usuario) {
         <div class="row g-4 justify-content-center">
             <?php
             $equipe = [
-                ['JK', 'José Kauã',    'Desenvolvedor Web',   'Equipe Verde Conecta'],
-                ['AA', 'ATERPEC',       'Coordenação Técnica', 'Projeto ATERPEC · UEMA'],
-                ['VC', 'Verde Conecta', 'Extensão Rural',      'SAF Maranhão · UEMA'],
+                ['MA', 'Milena Andréa',   'Extensão Rural',    'Equipe Verde Conecta · UEMA'],
+                ['LJ', 'Laurine de Jesus','Extensão Rural',    'Equipe Verde Conecta · UEMA'],
+                ['JR', 'Jéssica Rios',    'Extensão Rural',    'Equipe Verde Conecta · UEMA'],
+                ['TR', 'Tiago Rocha',     'Extensão Rural',    'Equipe Verde Conecta · UEMA'],
+                ['HM', 'Heloisa Simas',   'Extensão Rural',    'Equipe Verde Conecta · UEMA'],
+                ['JK', 'José Kauã',       'Desenvolvedor Web', 'Equipe Verde Conecta · UEMA'],
             ];
             foreach ($equipe as $m):
             ?>

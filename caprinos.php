@@ -9,11 +9,12 @@ $titulo_pagina = 'Caprinos';
 $animal = [
     'nome'     => 'Caprinos',
     'emoji'    => '🐐',
+    'imagem'   => 'https://images.unsplash.com/photo-1560819400-434c188f63ef?w=1400&q=80&auto=format&fit=crop',
     'descricao'=> 'A caprinocultura é uma das atividades mais importantes da agricultura familiar maranhense. Cabras são animais rústicos, adaptados ao clima semiárido e muito importantes para a geração de renda.',
     'racas' => [
-        ['emoji'=>'🐐','nome'=>'Anglo-nubiano', 'tipo'=>'Leite/Misto', 'desc'=>'Raça de orelhas longas e caídas, boa produção de leite com alto teor de gordura. Muito docil e popular em sistemas familiares no Nordeste.'],
-        ['emoji'=>'🐑','nome'=>'Boer',          'tipo'=>'Corte',       'desc'=>'Raça sul-africana de grande porte e rápido crescimento. Excelente rendimento de carcaça. Usado em cruzamento industrial para melhorar raças locais.'],
-        ['emoji'=>'🐐','nome'=>'SRD (Comum)',   'tipo'=>'Misto',       'desc'=>'Sem Raça Definida, os caprinos locais do Maranhão são extremamente rústicos e adaptados. Menor produção, mas altíssima resiliência e baixo custo de manutenção.'],
+        ['emoji'=>'🐐','nome'=>'Anglo-nubiano', 'tipo'=>'Leite/Misto','imagem'=>'https://images.unsplash.com/photo-1593750187970-84858a2aaf5e?w=600&q=80&auto=format&fit=crop','desc'=>'Raça de orelhas longas e caídas, boa produção de leite com alto teor de gordura. Muito docil e popular em sistemas familiares no Nordeste.'],
+        ['emoji'=>'🐑','nome'=>'Boer',          'tipo'=>'Corte',      'imagem'=>'https://images.unsplash.com/photo-1560819400-434c188f63ef?w=600&q=80&auto=format&fit=crop','desc'=>'Raça sul-africana de grande porte e rápido crescimento. Excelente rendimento de carcaça. Usado em cruzamento industrial para melhorar raças locais.'],
+        ['emoji'=>'🐐','nome'=>'SRD (Comum)',   'tipo'=>'Misto',      'imagem'=>'https://images.unsplash.com/photo-1593750187970-84858a2aaf5e?w=600&q=80&auto=format&fit=crop&sat=-50','desc'=>'Sem Raça Definida, os caprinos locais do Maranhão são extremamente rústicos e adaptados. Menor produção, mas altíssima resiliência e baixo custo de manutenção.'],
     ],
     'topicos' => [
         [

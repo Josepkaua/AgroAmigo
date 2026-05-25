@@ -9,11 +9,12 @@ $titulo_pagina = 'Ovinos';
 $animal = [
     'nome'     => 'Ovinos',
     'emoji'    => '🐑',
+    'imagem'   => 'https://images.unsplash.com/photo-1494079218307-7fa091ab4df2?w=1400&q=80&auto=format&fit=crop',
     'descricao'=> 'A ovinocultura no Maranhão é dominada pela raça Santa Inês, altamente adaptada ao clima tropical. A criação de ovinos oferece ótima rentabilidade e ciclo curto de produção para a agricultura familiar.',
     'racas' => [
-        ['emoji'=>'🐑','nome'=>'Santa Inês',   'tipo'=>'Corte/Misto', 'desc'=>'Raça brasileira mais popular no Nordeste. Sem lã, adaptada ao calor, resistente a parasitas e muito prolífica. Produz carne de qualidade e aceita bem cruzamento.'],
-        ['emoji'=>'🐏','nome'=>'Dorper',        'tipo'=>'Corte',       'desc'=>'Raça sul-africana de alto rendimento de carcaça. Quando cruzado com Santa Inês, gera animais mais pesados e com melhor conversão alimentar.'],
-        ['emoji'=>'🐑','nome'=>'SRD (Comum)',   'tipo'=>'Misto',       'desc'=>'Ovinos sem padrão racial definido, muito comuns no interior do Maranhão. Alta rusticidade e baixo custo de manutenção, embora com menor produtividade.'],
+        ['emoji'=>'🐑','nome'=>'Santa Inês',   'tipo'=>'Corte/Misto','imagem'=>'https://images.unsplash.com/photo-1494079218307-7fa091ab4df2?w=600&q=80&auto=format&fit=crop','desc'=>'Raça brasileira mais popular no Nordeste. Sem lã, adaptada ao calor, resistente a parasitas e muito prolífica. Produz carne de qualidade e aceita bem cruzamento.'],
+        ['emoji'=>'🐏','nome'=>'Dorper',        'tipo'=>'Corte',      'imagem'=>'https://images.unsplash.com/photo-1494079218307-7fa091ab4df2?w=600&q=80&auto=format&fit=crop&h=300','desc'=>'Raça sul-africana de alto rendimento de carcaça. Quando cruzado com Santa Inês, gera animais mais pesados e com melhor conversão alimentar.'],
+        ['emoji'=>'🐑','nome'=>'SRD (Comum)',   'tipo'=>'Misto',      'imagem'=>'https://images.unsplash.com/photo-1494079218307-7fa091ab4df2?w=600&q=80&auto=format&fit=crop&sat=-30','desc'=>'Ovinos sem padrão racial definido, muito comuns no interior do Maranhão. Alta rusticidade e baixo custo de manutenção, embora com menor produtividade.'],
     ],
     'topicos' => [
         [

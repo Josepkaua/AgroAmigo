@@ -171,21 +171,23 @@ $_idx_user = $usuario;
 
         <?php
         $animais_home = [
-            ['bovinos.php',  '🐄', 'Bovinos',  'Nelore · Girolando'],
-            ['aves.php',     '🐔', 'Aves',     'Caipira · ISA Brown'],
-            ['suinos.php',   '🐷', 'Suínos',   'Large White · Landrace'],
-            ['caprinos.php', '🐐', 'Caprinos', 'Anglo-nubiano · Boer'],
-            ['ovinos.php',   '🐑', 'Ovinos',   'Santa Inês · Dorper'],
-            ['peixes.php',   '🐟', 'Peixes',   'Tilápia · Tambaqui'],
+            ['bovinos.php',  'Bovinos',  'Nelore · Girolando', 'https://images.unsplash.com/photo-1588152850700-c82ecb8ba9b1?w=400&q=70&auto=format&fit=crop&h=120'],
+            ['aves.php',     'Aves',     'Caipira · ISA Brown', 'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=400&q=70&auto=format&fit=crop&h=120'],
+            ['suinos.php',   'Suínos',   'Large White · Landrace', 'https://images.unsplash.com/photo-1587213128862-80345e23a71a?w=400&q=70&auto=format&fit=crop&h=120'],
+            ['caprinos.php', 'Caprinos', 'Anglo-nubiano · Boer', 'https://images.unsplash.com/photo-1560819400-434c188f63ef?w=400&q=70&auto=format&fit=crop&h=120'],
+            ['ovinos.php',   'Ovinos',   'Santa Inês · Dorper', 'https://images.unsplash.com/photo-1494079218307-7fa091ab4df2?w=400&q=70&auto=format&fit=crop&h=120'],
+            ['peixes.php',   'Peixes',   'Tilápia · Tambaqui', 'https://images.unsplash.com/photo-1628859742240-269783f56d17?w=400&q=70&auto=format&fit=crop&h=120'],
         ];
         ?>
         <div class="row g-4 justify-content-center">
-            <?php foreach ($animais_home as [$href, $emoji, $nome, $racas]): ?>
+            <?php foreach ($animais_home as [$href, $nome, $racas, $img]): ?>
             <div class="col-6 col-md-4 col-lg-2">
                 <a href="<?= $href ?>" class="aa-animal-card">
-                    <span class="aa-animal-emoji"><?= $emoji ?></span>
-                    <div class="aa-animal-name"><?= $nome ?></div>
-                    <div class="aa-animal-sub"><?= $racas ?></div>
+                    <img src="<?= $img ?>" alt="<?= $nome ?>" class="aa-animal-card-img" loading="lazy">
+                    <div class="aa-animal-card-body">
+                        <div class="aa-animal-name"><?= $nome ?></div>
+                        <div class="aa-animal-sub"><?= $racas ?></div>
+                    </div>
                 </a>
             </div>
             <?php endforeach; ?>

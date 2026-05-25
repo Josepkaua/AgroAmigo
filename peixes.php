@@ -9,11 +9,12 @@ $titulo_pagina = 'Peixes';
 $animal = [
     'nome'     => 'Peixes',
     'emoji'    => '🐟',
+    'imagem'   => 'https://images.unsplash.com/photo-1628859742240-269783f56d17?w=1400&q=80&auto=format&fit=crop',
     'descricao'=> 'A piscicultura é uma das atividades que mais cresce no Maranhão. Tilápia e Tambaqui são as espécies mais cultivadas, com grande potencial de rentabilidade para pequenos produtores.',
     'racas' => [
-        ['emoji'=>'🐟','nome'=>'Tilápia do Nilo',  'tipo'=>'Corte', 'desc'=>'Oreochromis niloticus. Espécie mais criada no Brasil. Crescimento rápido, resistente e aceita bem ração. Adaptada a tanques e viveiros. Ciclo de 6 a 8 meses.'],
-        ['emoji'=>'🐠','nome'=>'Tambaqui',          'tipo'=>'Corte', 'desc'=>'Colossoma macropomum. Peixe nativo do Amazonas, muito consumido no Nordeste. Crescimento excelente em viveiros. Resistente e de fácil manejo. Ciclo de 10 a 14 meses.'],
-        ['emoji'=>'🐡','nome'=>'Tambacu (híbrido)', 'tipo'=>'Corte', 'desc'=>'Cruzamento entre Tambaqui e Pacu. Combina o crescimento rápido do tambaqui com a resistência do pacu. Popular em pisciculturas familiares do Nordeste.'],
+        ['emoji'=>'🐟','nome'=>'Tilápia do Nilo',  'tipo'=>'Corte','imagem'=>'https://images.unsplash.com/photo-1541441056316-443fff347c40?w=600&q=80&auto=format&fit=crop','desc'=>'Oreochromis niloticus. Espécie mais criada no Brasil. Crescimento rápido, resistente e aceita bem ração. Adaptada a tanques e viveiros. Ciclo de 6 a 8 meses.'],
+        ['emoji'=>'🐠','nome'=>'Tambaqui',          'tipo'=>'Corte','imagem'=>'https://images.unsplash.com/photo-1628859742240-269783f56d17?w=600&q=80&auto=format&fit=crop','desc'=>'Colossoma macropomum. Peixe nativo do Amazonas, muito consumido no Nordeste. Crescimento excelente em viveiros. Resistente e de fácil manejo. Ciclo de 10 a 14 meses.'],
+        ['emoji'=>'🐡','nome'=>'Tambacu (híbrido)', 'tipo'=>'Corte','imagem'=>'https://images.unsplash.com/photo-1723134085909-19da487ac9bd?w=600&q=80&auto=format&fit=crop','desc'=>'Cruzamento entre Tambaqui e Pacu. Combina o crescimento rápido do tambaqui com a resistência do pacu. Popular em pisciculturas familiares do Nordeste.'],
     ],
     'topicos' => [
         [

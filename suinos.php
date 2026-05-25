@@ -9,11 +9,12 @@ $titulo_pagina = 'Suínos';
 $animal = [
     'nome'     => 'Suínos',
     'emoji'    => '🐷',
+    'imagem'   => 'https://images.unsplash.com/photo-1587213128862-80345e23a71a?w=1400&q=80&auto=format&fit=crop',
     'descricao'=> 'Criação de suínos no Maranhão: orientações adaptadas ao clima quente do estado para raças comerciais e locais, muito presentes na agricultura familiar.',
     'racas' => [
-        ['emoji'=>'🐷','nome'=>'Large White',   'tipo'=>'Corte',  'desc'=>'Uma das raças mais produtivas do mundo. Corpo comprido, boa musculatura e alta conversão alimentar. Exige instalações com controle de temperatura.'],
-        ['emoji'=>'🐖','nome'=>'Landrace',       'tipo'=>'Corte',  'desc'=>'Raça de origem dinamarquesa, excelente para produção de presunto. Muito usada em cruzamentos industriais. Sensível ao calor — exige sombra e ventilação.'],
-        ['emoji'=>'🐗','nome'=>'Piau (local)',   'tipo'=>'Misto',  'desc'=>'Raça brasileira rústica, muito resistente ao clima nordestino. Menor ganho de peso, mas excelente adaptação ao manejo extensivo e à alimentação alternativa.'],
+        ['emoji'=>'🐷','nome'=>'Large White',   'tipo'=>'Corte', 'imagem'=>'https://images.unsplash.com/photo-1616109259043-fd30a7663a5d?w=600&q=80&auto=format&fit=crop','desc'=>'Uma das raças mais produtivas do mundo. Corpo comprido, boa musculatura e alta conversão alimentar. Exige instalações com controle de temperatura.'],
+        ['emoji'=>'🐖','nome'=>'Landrace',       'tipo'=>'Corte', 'imagem'=>'https://images.unsplash.com/photo-1587213128862-80345e23a71a?w=600&q=80&auto=format&fit=crop','desc'=>'Raça de origem dinamarquesa, excelente para produção de presunto. Muito usada em cruzamentos industriais. Sensível ao calor — exige sombra e ventilação.'],
+        ['emoji'=>'🐗','nome'=>'Piau (local)',   'tipo'=>'Misto', 'imagem'=>'https://images.unsplash.com/photo-1587213128862-80345e23a71a?w=600&q=80&auto=format&fit=crop&grayscale','desc'=>'Raça brasileira rústica, muito resistente ao clima nordestino. Menor ganho de peso, mas excelente adaptação ao manejo extensivo e à alimentação alternativa.'],
     ],
     'topicos' => [
         [

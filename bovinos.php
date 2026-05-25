@@ -9,11 +9,12 @@ $titulo_pagina = 'Bovinos';
 $animal = [
     'nome'     => 'Bovinos',
     'emoji'    => '🐄',
+    'imagem'   => 'https://images.unsplash.com/photo-1588152850700-c82ecb8ba9b1?w=1400&q=80&auto=format&fit=crop',
     'descricao'=> 'Orientações técnicas para criação de bovinos de corte e leite no Maranhão, com foco nas raças mais adaptadas ao clima quente e úmido da região.',
     'racas' => [
-        ['emoji'=>'🐂','nome'=>'Nelore',    'tipo'=>'Corte',      'desc'=>'Raça zebuína mais criada no Brasil. Altamente adaptada ao clima tropical, resistente a carrapatos e parasitas. Excelente ganho de peso a pasto.'],
-        ['emoji'=>'🐄','nome'=>'Girolando', 'tipo'=>'Leite/Misto', 'desc'=>'Cruzamento entre Gir (zebuíno) e Holandês. Boa produção de leite com resistência ao calor. Muito comum na agricultura familiar do MA.'],
-        ['emoji'=>'🐃','nome'=>'Gir',       'tipo'=>'Leite',      'desc'=>'Raça zebuína de origem indiana, base do cruzamento Girolando. Produção de leite de qualidade com alta adaptação ao clima quente.'],
+        ['emoji'=>'🐂','nome'=>'Nelore',    'tipo'=>'Corte',      'imagem'=>'https://images.unsplash.com/photo-1566040924976-f837330d1a5b?w=600&q=80&auto=format&fit=crop', 'desc'=>'Raça zebuína mais criada no Brasil. Altamente adaptada ao clima tropical, resistente a carrapatos e parasitas. Excelente ganho de peso a pasto.'],
+        ['emoji'=>'🐄','nome'=>'Girolando', 'tipo'=>'Leite/Misto','imagem'=>'https://images.unsplash.com/photo-1498191923457-88552caeccb3?w=600&q=80&auto=format&fit=crop', 'desc'=>'Cruzamento entre Gir (zebuíno) e Holandês. Boa produção de leite com resistência ao calor. Muito comum na agricultura familiar do MA.'],
+        ['emoji'=>'🐃','nome'=>'Gir',       'tipo'=>'Leite',      'imagem'=>'https://images.unsplash.com/photo-1583364428520-fa6c5013c0c3?w=600&q=80&auto=format&fit=crop', 'desc'=>'Raça zebuína de origem indiana, base do cruzamento Girolando. Produção de leite de qualidade com alta adaptação ao clima quente.'],
     ],
     'topicos' => [
         [

@@ -1,3 +1,27 @@
+<?php
+declare(strict_types=1);
+require_once '../includes/auth.php';
+session_init();
+
+$_fc_user = usuario_logado();
+if (!$_fc_user) {
+    header('Location: ../index.php');
+    exit;
+}
+
+$_fc_dados  = null;
+$_fc_salvo  = null;
+$pdo = db();
+$stmt = $pdo->prepare(
+    "SELECT dados, salvo_em FROM fichas_salvas WHERE usuario_id = :uid AND tipo = 'zootecnica'"
+);
+$stmt->execute(['uid' => $_fc_user['id']]);
+$rec = $stmt->fetch();
+if ($rec) {
+    $_fc_dados = json_decode($rec['dados'], true);
+    $_fc_salvo = date('d/m/Y H:i', strtotime($rec['salvo_em']));
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -15,6 +39,14 @@
     <div class="fc-topbar-logo"><span>🌱</span> Agro<strong>Amigo</strong></div>
     <div class="fc-topbar-actions">
         <a href="../fichas.php" class="fc-btn-back"><i class="bi bi-arrow-left"></i> Voltar</a>
+        <?php if ($_fc_salvo): ?>
+        <span class="fc-saved-at" id="fcSavedAt">Salvo: <?= $_fc_salvo ?></span>
+        <?php else: ?>
+        <span class="fc-saved-at" id="fcSavedAt"></span>
+        <?php endif; ?>
+        <button class="fc-btn-save" id="fcBtnSave" onclick="salvarFicha()">
+            <i class="bi bi-floppy"></i> Salvar
+        </button>
         <button class="fc-btn-print" onclick="window.print()"><i class="bi bi-printer"></i> Imprimir</button>
     </div>
 </div>
@@ -28,8 +60,10 @@
             <div class="fc-header-subtitle">Controle de animal — Projeto Verde Conecta / UEMA</div>
         </div>
         <div class="fc-header-badge">
-            <div class="fc-header-badge-label">Nº da Ficha</div>
-            <div class="fc-header-badge-value">___________</div>
+            <div class="fc-header-badge-label">Produtor</div>
+            <div class="fc-header-badge-value" style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px">
+                <?= h(explode(' ', $_fc_user['nome'])[0]) ?>
+            </div>
         </div>
     </div>
 
@@ -41,25 +75,25 @@
             <div class="fc-row cols-2-1">
                 <div class="fc-field">
                     <label>Nome da Propriedade</label>
-                    <input type="text" class="fc-input" placeholder="Ex: Fazenda São João">
+                    <input type="text" class="fc-input" data-fk="prop_nome" placeholder="Ex: Fazenda São João">
                 </div>
                 <div class="fc-field">
                     <label>Data de Abertura</label>
-                    <input type="text" class="fc-input" data-mask="date">
+                    <input type="text" class="fc-input" data-fk="prop_data" data-mask="date">
                 </div>
             </div>
             <div class="fc-row cols-3">
                 <div class="fc-field">
                     <label>Município / UF</label>
-                    <input type="text" class="fc-input" placeholder="Ex: Bacabal / MA">
+                    <input type="text" class="fc-input" data-fk="prop_municipio" placeholder="Ex: Bacabal / MA">
                 </div>
                 <div class="fc-field">
                     <label>Responsável pela Criação</label>
-                    <input type="text" class="fc-input">
+                    <input type="text" class="fc-input" data-fk="prop_responsavel">
                 </div>
                 <div class="fc-field">
                     <label>Contato (WhatsApp)</label>
-                    <input type="text" class="fc-input" placeholder="(XX) 9 9999-0000">
+                    <input type="text" class="fc-input" data-fk="prop_contato" placeholder="(XX) 9 9999-0000">
                 </div>
             </div>
         </div>
@@ -70,46 +104,46 @@
             <div class="fc-row cols-3">
                 <div class="fc-field">
                     <label>Brinco / Tatuagem</label>
-                    <input type="text" class="fc-input" placeholder="Nº de identificação">
+                    <input type="text" class="fc-input" data-fk="animal_brinco" placeholder="Nº de identificação">
                 </div>
                 <div class="fc-field">
                     <label>Espécie</label>
-                    <input type="text" class="fc-input" placeholder="Ex: Bovino, Caprino...">
+                    <input type="text" class="fc-input" data-fk="animal_especie" placeholder="Ex: Bovino, Caprino...">
                 </div>
                 <div class="fc-field">
                     <label>Raça</label>
-                    <input type="text" class="fc-input" placeholder="Ex: Nelore, Santa Inês...">
+                    <input type="text" class="fc-input" data-fk="animal_raca" placeholder="Ex: Nelore, Santa Inês...">
                 </div>
             </div>
             <div class="fc-row cols-4">
                 <div class="fc-field">
                     <label>Sexo</label>
                     <div class="fc-check-group">
-                        <label class="fc-check-item"><input type="checkbox"> Macho</label>
-                        <label class="fc-check-item"><input type="checkbox"> Fêmea</label>
+                        <label class="fc-check-item"><input type="checkbox" data-fk-bool="sexo_macho"> Macho</label>
+                        <label class="fc-check-item"><input type="checkbox" data-fk-bool="sexo_femea"> Fêmea</label>
                     </div>
                 </div>
                 <div class="fc-field">
                     <label>Data de Nascimento</label>
-                    <input type="date" class="fc-input">
+                    <input type="date" class="fc-input" data-fk="animal_nascimento">
                 </div>
                 <div class="fc-field">
                     <label>Peso ao Nascer (kg)</label>
-                    <input type="number" step="0.1" min="0" class="fc-input">
+                    <input type="number" step="0.1" min="0" class="fc-input" data-fk="animal_peso_nascer">
                 </div>
                 <div class="fc-field">
                     <label>Pelagem / Cor</label>
-                    <input type="text" class="fc-input">
+                    <input type="text" class="fc-input" data-fk="animal_pelagem">
                 </div>
             </div>
             <div class="fc-row cols-2">
                 <div class="fc-field">
                     <label>ID / Nome da Mãe</label>
-                    <input type="text" class="fc-input">
+                    <input type="text" class="fc-input" data-fk="animal_mae">
                 </div>
                 <div class="fc-field">
                     <label>ID / Nome do Pai (Touro / Reprodutor)</label>
-                    <input type="text" class="fc-input">
+                    <input type="text" class="fc-input" data-fk="animal_pai">
                 </div>
             </div>
         </div>
@@ -130,15 +164,15 @@
                             <th>Responsável</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody data-table="pesagens">
                         <?php for ($i = 0; $i < 10; $i++): ?>
                         <tr class="pesagem-row">
-                            <td><input type="date" class="fc-td-input data-pesagem"></td>
-                            <td><input type="text" class="fc-td-input" placeholder="ex: 3 meses"></td>
-                            <td><input type="number" step="0.1" min="0" class="fc-td-input peso-pesagem"></td>
-                            <td><input type="text" class="fc-td-input fc-calc ganho-pesagem" readonly placeholder="auto"></td>
-                            <td><input type="number" step="0.5" min="1" max="5" class="fc-td-input" placeholder="1–5"></td>
-                            <td><input type="text" class="fc-td-input"></td>
+                            <td><input type="date" class="fc-td-input data-pesagem" data-cell="data"></td>
+                            <td><input type="text"   class="fc-td-input" data-cell="idade" placeholder="ex: 3 meses"></td>
+                            <td><input type="number" step="0.1" min="0" class="fc-td-input peso-pesagem" data-cell="peso"></td>
+                            <td><input type="text"   class="fc-td-input fc-calc ganho-pesagem" data-cell="ganho" readonly placeholder="auto"></td>
+                            <td><input type="number" step="0.5" min="1" max="5" class="fc-td-input" data-cell="escore" placeholder="1–5"></td>
+                            <td><input type="text"   class="fc-td-input" data-cell="responsavel"></td>
                         </tr>
                         <?php endfor; ?>
                     </tbody>
@@ -160,14 +194,14 @@
                             <th>Responsável</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody data-table="ocorrencias">
                         <?php for ($i = 0; $i < 7; $i++): ?>
                         <tr>
-                            <td><input type="text" class="fc-td-input"></td>
-                            <td><input type="text" class="fc-td-input"></td>
-                            <td><input type="text" class="fc-td-input"></td>
-                            <td><input type="text" class="fc-td-input"></td>
-                            <td><input type="text" class="fc-td-input"></td>
+                            <td><input type="text" class="fc-td-input" data-cell="data"></td>
+                            <td><input type="text" class="fc-td-input" data-cell="diagnostico"></td>
+                            <td><input type="text" class="fc-td-input" data-cell="medicamento"></td>
+                            <td><input type="text" class="fc-td-input" data-cell="dose"></td>
+                            <td><input type="text" class="fc-td-input" data-cell="responsavel"></td>
                         </tr>
                         <?php endfor; ?>
                     </tbody>
@@ -182,26 +216,26 @@
                 <div class="fc-field">
                     <label>Destino</label>
                     <div class="fc-check-group col" style="margin-top: 4px;">
-                        <label class="fc-check-item"><input type="checkbox"> Venda</label>
-                        <label class="fc-check-item"><input type="checkbox"> Abate próprio</label>
-                        <label class="fc-check-item"><input type="checkbox"> Morte</label>
-                        <label class="fc-check-item"><input type="checkbox"> Transferência</label>
+                        <label class="fc-check-item"><input type="checkbox" data-fk-bool="destino_venda"> Venda</label>
+                        <label class="fc-check-item"><input type="checkbox" data-fk-bool="destino_abate"> Abate próprio</label>
+                        <label class="fc-check-item"><input type="checkbox" data-fk-bool="destino_morte"> Morte</label>
+                        <label class="fc-check-item"><input type="checkbox" data-fk-bool="destino_transf"> Transferência</label>
                     </div>
                 </div>
                 <div>
                     <div class="fc-row cols-2" style="margin-bottom: 12px;">
                         <div class="fc-field">
                             <label>Data</label>
-                            <input type="date" class="fc-input">
+                            <input type="date" class="fc-input" data-fk="destino_data">
                         </div>
                         <div class="fc-field">
                             <label>Peso final (kg)</label>
-                            <input type="number" step="0.1" min="0" class="fc-input">
+                            <input type="number" step="0.1" min="0" class="fc-input" data-fk="destino_peso">
                         </div>
                     </div>
                     <div class="fc-field">
                         <label>Destino / Comprador / Causa da morte</label>
-                        <textarea class="fc-textarea" rows="2" placeholder="Descreva o destino do animal..."></textarea>
+                        <textarea class="fc-textarea" rows="2" data-fk="destino_obs" placeholder="Descreva o destino do animal..."></textarea>
                     </div>
                 </div>
             </div>
@@ -210,7 +244,7 @@
         <!-- 6. Observações Gerais -->
         <div class="fc-section">
             <div class="fc-section-title">📝 Observações Gerais</div>
-            <textarea class="fc-textarea" rows="3" placeholder="Anote informações relevantes não contempladas nos campos acima..."></textarea>
+            <textarea class="fc-textarea" rows="3" data-fk="observacoes" placeholder="Anote informações relevantes não contempladas nos campos acima..."></textarea>
         </div>
 
     </div>
@@ -221,5 +255,11 @@
     </div>
 
 </div>
+
+<script>
+window.FICHA_TIPO  = 'zootecnica';
+window.FICHA_CSRF  = '<?= csrf_token() ?>';
+window.FICHA_DADOS = <?= json_encode($_fc_dados ?? (object)[], JSON_UNESCAPED_UNICODE) ?>;
+</script>
 </body>
 </html>

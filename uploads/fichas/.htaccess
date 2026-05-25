@@ -1,0 +1,3 @@
+# Bloqueia acesso direto HTTP aos arquivos de fichas salvas
+Order Allow,Deny
+Deny from all

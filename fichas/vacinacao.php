@@ -1,3 +1,27 @@
+<?php
+declare(strict_types=1);
+require_once '../includes/auth.php';
+session_init();
+
+$_fc_user = usuario_logado();
+if (!$_fc_user) {
+    header('Location: ../index.php');
+    exit;
+}
+
+$_fc_dados = null;
+$_fc_salvo = null;
+$pdo = db();
+$stmt = $pdo->prepare(
+    "SELECT dados, salvo_em FROM fichas_salvas WHERE usuario_id = :uid AND tipo = 'vacinacao'"
+);
+$stmt->execute(['uid' => $_fc_user['id']]);
+$rec = $stmt->fetch();
+if ($rec) {
+    $_fc_dados = json_decode($rec['dados'], true);
+    $_fc_salvo = date('d/m/Y H:i', strtotime($rec['salvo_em']));
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -15,6 +39,10 @@
     <div class="fc-topbar-logo"><span>🌱</span> Agro<strong>Amigo</strong></div>
     <div class="fc-topbar-actions">
         <a href="../fichas.php" class="fc-btn-back"><i class="bi bi-arrow-left"></i> Voltar</a>
+        <span class="fc-saved-at" id="fcSavedAt"><?= $_fc_salvo ? 'Salvo: ' . $_fc_salvo : '' ?></span>
+        <button class="fc-btn-save" id="fcBtnSave" onclick="salvarFicha()">
+            <i class="bi bi-floppy"></i> Salvar
+        </button>
         <button class="fc-btn-print" onclick="window.print()"><i class="bi bi-printer"></i> Imprimir</button>
     </div>
 </div>
@@ -28,8 +56,10 @@
             <div class="fc-header-subtitle">Calendário vacinal do rebanho — Projeto Verde Conecta / UEMA</div>
         </div>
         <div class="fc-header-badge">
-            <div class="fc-header-badge-label">Nº da Ficha</div>
-            <div class="fc-header-badge-value">___________</div>
+            <div class="fc-header-badge-label">Produtor</div>
+            <div class="fc-header-badge-value" style="font-size:12px">
+                <?= h(explode(' ', $_fc_user['nome'])[0]) ?>
+            </div>
         </div>
     </div>
 
@@ -41,49 +71,49 @@
             <div class="fc-row cols-2-1">
                 <div class="fc-field">
                     <label>Nome da Propriedade</label>
-                    <input type="text" class="fc-input">
+                    <input type="text" class="fc-input" data-fk="prop_nome">
                 </div>
                 <div class="fc-field">
                     <label>Período de Referência</label>
-                    <input type="text" class="fc-input" placeholder="Ex: Jan–Dez 2025">
+                    <input type="text" class="fc-input" data-fk="prop_periodo" placeholder="Ex: Jan–Dez 2025">
                 </div>
             </div>
             <div class="fc-row cols-3">
                 <div class="fc-field">
                     <label>Município / UF</label>
-                    <input type="text" class="fc-input" placeholder="Ex: Bacabal / MA">
+                    <input type="text" class="fc-input" data-fk="prop_municipio" placeholder="Ex: Bacabal / MA">
                 </div>
                 <div class="fc-field">
                     <label>Responsável</label>
-                    <input type="text" class="fc-input">
+                    <input type="text" class="fc-input" data-fk="prop_responsavel">
                 </div>
                 <div class="fc-field">
                     <label>Espécie Principal</label>
-                    <input type="text" class="fc-input" placeholder="Ex: Bovinos, Aves...">
+                    <input type="text" class="fc-input" data-fk="prop_especie" placeholder="Ex: Bovinos, Aves...">
                 </div>
             </div>
         </div>
 
-        <!-- 2. Identificação do Animal (opcional para individual) -->
+        <!-- 2. Identificação do Animal -->
         <div class="fc-section">
             <div class="fc-section-title">🐄 Identificação do Animal (quando individual)</div>
             <p class="fc-hint">Preencha apenas se for uma ficha individual. Deixe em branco para controle de rebanho.</p>
             <div class="fc-row cols-4">
                 <div class="fc-field">
                     <label>Brinco / Tatuagem</label>
-                    <input type="text" class="fc-input">
+                    <input type="text" class="fc-input" data-fk="animal_brinco">
                 </div>
                 <div class="fc-field">
                     <label>Espécie</label>
-                    <input type="text" class="fc-input">
+                    <input type="text" class="fc-input" data-fk="animal_especie">
                 </div>
                 <div class="fc-field">
                     <label>Raça</label>
-                    <input type="text" class="fc-input">
+                    <input type="text" class="fc-input" data-fk="animal_raca">
                 </div>
                 <div class="fc-field">
                     <label>Data de Nascimento</label>
-                    <input type="text" class="fc-input" placeholder="dd/mm/aaaa">
+                    <input type="text" class="fc-input" data-fk="animal_nascimento" placeholder="dd/mm/aaaa">
                 </div>
             </div>
         </div>
@@ -106,17 +136,17 @@
                             <th>Aplicador</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody data-table="vacinacoes">
                         <?php for ($i = 0; $i < 15; $i++): ?>
                         <tr>
-                            <td><input type="text" class="fc-td-input"></td>
-                            <td><input type="text" class="fc-td-input"></td>
-                            <td><input type="text" class="fc-td-input"></td>
-                            <td><input type="text" class="fc-td-input"></td>
-                            <td><input type="text" class="fc-td-input"></td>
-                            <td><input type="text" class="fc-td-input"></td>
-                            <td><input type="text" class="fc-td-input"></td>
-                            <td><input type="text" class="fc-td-input"></td>
+                            <td><input type="text" class="fc-td-input" data-cell="nome"></td>
+                            <td><input type="text" class="fc-td-input" data-cell="data"></td>
+                            <td><input type="text" class="fc-td-input" data-cell="dose"></td>
+                            <td><input type="text" class="fc-td-input" data-cell="via"></td>
+                            <td><input type="text" class="fc-td-input" data-cell="lote"></td>
+                            <td><input type="text" class="fc-td-input" data-cell="validade"></td>
+                            <td><input type="text" class="fc-td-input" data-cell="reforca"></td>
+                            <td><input type="text" class="fc-td-input" data-cell="aplicador"></td>
                         </tr>
                         <?php endfor; ?>
                     </tbody>
@@ -124,7 +154,7 @@
             </div>
         </div>
 
-        <!-- 4. Lembretes de Vacinações Obrigatórias -->
+        <!-- 4. Calendário de Referência (Maranhão) — somente leitura, sem data-table -->
         <div class="fc-section">
             <div class="fc-section-title">📌 Calendário de Referência (Maranhão)</div>
             <p class="fc-hint">Use como guia para planejar as vacinações ao longo do ano. Consulte sempre o médico-veterinário.</p>
@@ -177,7 +207,7 @@
         <!-- 5. Observações -->
         <div class="fc-section">
             <div class="fc-section-title">📝 Observações</div>
-            <textarea class="fc-textarea" rows="3" placeholder="Anote reações vacinais, lotes com problema, observações gerais..."></textarea>
+            <textarea class="fc-textarea" rows="3" data-fk="observacoes" placeholder="Anote reações vacinais, lotes com problema, observações gerais..."></textarea>
         </div>
 
         <!-- Assinatura -->
@@ -185,11 +215,11 @@
             <div class="fc-row cols-2">
                 <div class="fc-field">
                     <label>Assinatura do Produtor</label>
-                    <input type="text" class="fc-input" style="margin-top: 20px;">
+                    <input type="text" class="fc-input" data-fk="ass_produtor" style="margin-top: 20px;">
                 </div>
                 <div class="fc-field">
                     <label>Assinatura do Técnico Responsável</label>
-                    <input type="text" class="fc-input" style="margin-top: 20px;">
+                    <input type="text" class="fc-input" data-fk="ass_tecnico" style="margin-top: 20px;">
                 </div>
             </div>
         </div>
@@ -202,5 +232,11 @@
     </div>
 
 </div>
+
+<script>
+window.FICHA_TIPO  = 'vacinacao';
+window.FICHA_CSRF  = '<?= csrf_token() ?>';
+window.FICHA_DADOS = <?= json_encode($_fc_dados ?? (object)[], JSON_UNESCAPED_UNICODE) ?>;
+</script>
 </body>
 </html>

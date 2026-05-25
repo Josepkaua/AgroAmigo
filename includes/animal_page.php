@@ -1,17 +1,21 @@
 <?php
 // Template para páginas de animais.
-// Vars esperadas: $animal (array com nome, emoji, descricao, racas, topicos)
+// Vars esperadas: $animal (array com nome, emoji, imagem, descricao, racas, topicos)
+$_img_hero = $animal['imagem'] ?? '';
 ?>
 
 <!-- HERO DA PÁGINA -->
-<section class="aa-page-hero">
+<section class="aa-page-hero<?= $_img_hero ? ' has-bg-img' : '' ?>"
+         <?= $_img_hero ? 'style="background-image:url(\'' . htmlspecialchars($_img_hero) . '\')"' : '' ?>>
     <div class="container position-relative">
         <nav class="aa-breadcrumb mb-3" aria-label="breadcrumb">
             <a href="index.php">Início</a>
             <span>/</span>
             <span class="text-white"><?= htmlspecialchars($animal['nome']) ?></span>
         </nav>
+        <?php if (!$_img_hero): ?>
         <span class="aa-page-emoji"><?= $animal['emoji'] ?></span>
+        <?php endif; ?>
         <h1 class="aa-page-title"><?= htmlspecialchars($animal['nome']) ?></h1>
         <p class="aa-page-desc mt-3"><?= htmlspecialchars($animal['descricao']) ?></p>
     </div>
@@ -30,10 +34,20 @@
             <?php foreach ($animal['racas'] as $raca): ?>
             <div class="col-md-6 col-lg-4">
                 <div class="aa-raca-card h-100">
-                    <div class="aa-raca-emoji"><?= $raca['emoji'] ?></div>
-                    <div class="aa-raca-nome"><?= htmlspecialchars($raca['nome']) ?></div>
-                    <div class="aa-raca-tipo"><?= htmlspecialchars($raca['tipo']) ?></div>
-                    <p class="aa-raca-desc mt-2"><?= htmlspecialchars($raca['desc']) ?></p>
+                    <?php if (!empty($raca['imagem'])): ?>
+                    <img src="<?= htmlspecialchars($raca['imagem']) ?>"
+                         alt="<?= htmlspecialchars($raca['nome']) ?>"
+                         class="aa-raca-card-img"
+                         loading="lazy">
+                    <?php endif; ?>
+                    <div class="aa-raca-body">
+                        <?php if (empty($raca['imagem'])): ?>
+                        <div class="aa-raca-emoji"><?= $raca['emoji'] ?></div>
+                        <?php endif; ?>
+                        <div class="aa-raca-nome"><?= htmlspecialchars($raca['nome']) ?></div>
+                        <div class="aa-raca-tipo"><?= htmlspecialchars($raca['tipo']) ?></div>
+                        <p class="aa-raca-desc mt-2"><?= htmlspecialchars($raca['desc']) ?></p>
+                    </div>
                 </div>
             </div>
             <?php endforeach; ?>

@@ -815,8 +815,49 @@ ul    { list-style: none; padding: 0; }
     .aa-page-hero { padding: 76px 0 16px; }
     .aa-hero { min-height: auto; padding: 90px 0 60px; }
     .aa-whatsapp-card, .aa-contact-card { padding: 24px; }
+    .aa-about-box { padding: 32px 24px; }
+    .aa-raca-card-img { height: 140px; }
+    .aa-cta-box { padding: 32px 20px; }
+    .aa-cta-title { font-size: 20px; }
+    .aa-cta-desc  { font-size: 14px; }
+}
+@media (max-width: 576px) {
+    /* Painel — cards de estatística empilham verticalmente */
+    .aa-stat-card { flex-direction: column; align-items: flex-start; gap: 6px; padding: 14px; }
+    .aa-stat-val  { font-size: 22px; }
+
+    /* Painel — badges de propriedade quebram para nova linha */
+    .aa-prop-item   { flex-wrap: wrap; }
+    .aa-prop-badges { width: 100%; justify-content: flex-start; padding-top: 2px; }
+
+    /* Auth card */
+    .aa-auth-card { padding: 28px 18px; }
+
+    /* Fichas */
+    .aa-ficha-card { padding: 20px 16px; }
+
+    /* Raças */
+    .aa-raca-card-img { height: 120px; }
+    .aa-raca-body     { padding: 14px 16px 16px; }
+
+    /* WhatsApp / contato */
+    .aa-whatsapp-card, .aa-contact-card { padding: 20px 16px; }
+    .aa-wpp-titulo { font-size: 18px; }
+
+    /* Seções */
+    .aa-section, .aa-section-alt { padding: 48px 0; }
 }
 @media (max-width: 480px) {
-    .aa-section, .aa-section-alt { padding: 48px 0; }
     .aa-float-card { display: none; }
+    .aa-hero { padding: 80px 0 40px; }
+    .aa-page-hero { padding: 72px 0 12px; }
+    .aa-page-title { font-size: 1.4rem; }
+    .aa-page-desc  { font-size: 13px; }
+
+    /* Mini tabela pesagens */
+    .aa-mini-val { font-size: 13px; }
+
+    /* Stat cards do hero (home) */
+    .aa-stat-value { font-size: 22px; }
+    .aa-stat-label { font-size: 11px; }
 }

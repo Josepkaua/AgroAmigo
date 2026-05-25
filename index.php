@@ -405,28 +405,66 @@ $_saud   = $_hora < 12 ? 'Bom dia' : ($_hora < 18 ? 'Boa tarde' : 'Boa noite');
         .lp-footer-logo{font-size:18px;font-weight:400;color:#fff;margin-bottom:8px}
         .lp-footer-logo strong{font-weight:800}
 
+        /* Hamburger */
+        .lp-ham-btn{display:none;background:none;border:none;color:#fff;font-size:26px;line-height:1;cursor:pointer;padding:4px;align-items:center;flex-shrink:0}
+        /* Mobile menu */
+        .lp-mob-menu{display:none;flex-direction:column;position:absolute;top:64px;left:0;right:0;background:var(--g900);border-top:1px solid rgba(255,255,255,.1);padding:10px 16px 18px;z-index:102}
+        .lp-mob-menu.open{display:flex}
+        .lp-mob-link{font-size:15px;font-weight:500;color:rgba(255,255,255,.85);padding:11px 4px;border-bottom:1px solid rgba(255,255,255,.08);transition:color .15s}
+        .lp-mob-link:last-of-type{border-bottom:none}
+        .lp-mob-link:hover{color:#fff}
+        .lp-mob-sep{height:1px;background:rgba(255,255,255,.12);margin:8px 0}
+        .lp-mob-btn-outline{display:block;text-align:center;padding:11px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:8px;color:#fff;font-size:14px;font-weight:700;margin-top:8px;transition:background .2s}
+        .lp-mob-btn-solid{display:block;text-align:center;padding:11px;background:#fff;border-radius:8px;color:var(--g800);font-size:14px;font-weight:700;margin-top:8px;transition:background .2s}
+        .lp-mob-btn-outline:hover{background:rgba(255,255,255,.2);color:#fff}
+        .lp-mob-btn-solid:hover{background:var(--g50);color:var(--g900)}
+
         @media(max-width:768px){
-            .lp-nav{padding:0 16px}
-            .lp-nav-links .lp-nav-link{display:none}
+            .lp-nav{padding:0 16px;position:relative}
+            .lp-nav-links,.lp-btn-login,.lp-btn-cta{display:none}
+            .lp-ham-btn{display:flex}
             .lp-hero{padding:80px 0 40px}
             .lp-about-box{padding:32px 24px}
             .lp-section,.lp-section-alt{padding:60px 0}
+        }
+        @media(max-width:480px){
+            .lp-hero-title{font-size:2rem;letter-spacing:-1px}
+            .lp-hero-desc{font-size:15px}
+            .lp-btn-hero-primary,.lp-btn-hero-secondary{font-size:14px;padding:11px 22px}
+            .lp-about-box{padding:24px 18px}
+            .lp-section,.lp-section-alt{padding:48px 0}
+            .lp-feature-card{padding:20px}
+            .lp-team-card{padding:20px 16px}
+            .lp-cta{padding:60px 0}
         }
     </style>
 </head>
 <body>
 
 <!-- NAVBAR -->
-<nav class="lp-nav">
+<nav class="lp-nav" style="position:relative">
     <div class="lp-logo">🌱 Agro<strong>Amigo</strong></div>
     <div class="lp-nav-links">
         <a href="#sobre"    class="lp-nav-link">Sobre</a>
         <a href="#funciona" class="lp-nav-link">Como funciona</a>
         <a href="#equipe"   class="lp-nav-link">Equipe</a>
     </div>
-    <div style="display:flex;gap:8px">
+    <div style="display:flex;gap:8px;align-items:center">
         <a href="login.php"    class="lp-btn-login">Entrar</a>
         <a href="cadastro.php" class="lp-btn-cta">Criar conta grátis</a>
+        <button class="lp-ham-btn" id="lp-ham-btn" aria-label="Abrir menu" aria-expanded="false">
+            <i class="bi bi-list" id="lp-ham-ico"></i>
+        </button>
+    </div>
+
+    <!-- Menu mobile -->
+    <div class="lp-mob-menu" id="lp-mob-menu" aria-hidden="true">
+        <a href="#sobre"    class="lp-mob-link">Sobre</a>
+        <a href="#funciona" class="lp-mob-link">Como funciona</a>
+        <a href="#equipe"   class="lp-mob-link">Equipe</a>
+        <div class="lp-mob-sep"></div>
+        <a href="login.php"    class="lp-mob-btn-outline">Entrar</a>
+        <a href="cadastro.php" class="lp-mob-btn-solid">Criar conta grátis</a>
     </div>
 </nav>
 
@@ -635,5 +673,28 @@ $_saud   = $_hora < 12 ? 'Bom dia' : ($_hora < 18 ? 'Boa tarde' : 'Boa noite');
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function(){
+    var btn  = document.getElementById('lp-ham-btn');
+    var menu = document.getElementById('lp-mob-menu');
+    var ico  = document.getElementById('lp-ham-ico');
+    if (!btn) return;
+    function toggle() {
+        var open = menu.classList.toggle('open');
+        ico.className = open ? 'bi bi-x' : 'bi bi-list';
+        btn.setAttribute('aria-expanded', open);
+        menu.setAttribute('aria-hidden', !open);
+    }
+    btn.addEventListener('click', toggle);
+    menu.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', function() {
+            menu.classList.remove('open');
+            ico.className = 'bi bi-list';
+            btn.setAttribute('aria-expanded', 'false');
+            menu.setAttribute('aria-hidden', 'true');
+        });
+    });
+})();
+</script>
 </body>
 </html>

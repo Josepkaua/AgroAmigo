@@ -92,9 +92,44 @@ $g_titulo = $g_titulo ?? 'Gestão';
         .g-page-btn:hover:not(:disabled){background:#f8fafc}
         .g-page-btn.active{background:var(--g700);color:#fff;border-color:var(--g700)}
         .g-page-btn:disabled{opacity:.4;cursor:default}
+
+        /* Tabela com scroll horizontal no mobile */
+        .g-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+        /* Auto-refresh badge */
+        .g-refresh-badge{display:flex;align-items:center;gap:6px;font-size:11px;color:#64748b;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:4px 10px;white-space:nowrap;cursor:default;user-select:none}
+        .g-refresh-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;flex-shrink:0;animation:g-blink 2s ease-in-out infinite}
+        @keyframes g-blink{0%,100%{opacity:1}50%{opacity:.3}}
+        .g-refresh-btn{background:none;border:none;cursor:pointer;color:#64748b;font-size:13px;padding:2px 4px;transition:color .15s;line-height:1;font-family:inherit}
+        .g-refresh-btn:hover{color:var(--g700)}
+
+        /* Mobile sidebar */
+        .g-mob-toggle{display:none;background:none;border:none;color:#1e293b;font-size:24px;cursor:pointer;padding:2px 6px;line-height:1;flex-shrink:0}
+        .g-sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:199}
+
+        @media(max-width:1024px){
+            .g-sidebar{transform:translateX(-100%);transition:transform .25s ease;z-index:200;box-shadow:4px 0 24px rgba(0,0,0,.25)}
+            .g-sidebar.g-open{transform:translateX(0)}
+            .g-main{margin-left:0}
+            .g-mob-toggle{display:block}
+            .g-sidebar-overlay.g-open{display:block}
+            .g-topbar{padding:12px 16px}
+            .g-content{padding:16px 14px}
+        }
+        @media(max-width:576px){
+            .g-stat-card{flex-direction:column;align-items:flex-start;gap:8px;padding:14px 16px}
+            .g-stat-val{font-size:20px}
+            .g-table{font-size:12px}
+            .g-table th,.g-table td{padding:8px 10px;white-space:nowrap}
+            .g-card-head{flex-wrap:wrap;gap:8px}
+            .g-content{padding:12px 10px}
+        }
     </style>
 </head>
 <body>
+
+<!-- Overlay mobile para fechar sidebar -->
+<div class="g-sidebar-overlay" id="g-sidebar-overlay"></div>
 
 <!-- SIDEBAR -->
 <aside class="g-sidebar">
@@ -145,9 +180,23 @@ $g_titulo = $g_titulo ?? 'Gestão';
 <!-- MAIN -->
 <main class="g-main">
     <div class="g-topbar">
-        <div class="g-page-title"><?= h($g_titulo) ?></div>
-        <div style="font-size:12px;color:#64748b;">
-            <?= date('d/m/Y H:i') ?>
+        <div style="display:flex;align-items:center;gap:10px">
+            <button class="g-mob-toggle" id="g-mob-toggle" aria-label="Abrir menu">
+                <i class="bi bi-list"></i>
+            </button>
+            <div class="g-page-title"><?= h($g_titulo) ?></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+            <div class="g-refresh-badge" id="g-refresh-badge" title="Atualização automática">
+                <span class="g-refresh-dot"></span>
+                <span id="g-refresh-label">Atualiza em <strong id="g-refresh-count">30</strong>s</span>
+                <button class="g-refresh-btn" id="g-refresh-now" title="Atualizar agora">
+                    <i class="bi bi-arrow-clockwise"></i>
+                </button>
+            </div>
+            <div style="font-size:12px;color:#64748b;white-space:nowrap">
+                <?= date('d/m/Y H:i') ?>
+            </div>
         </div>
     </div>
     <div class="g-content">

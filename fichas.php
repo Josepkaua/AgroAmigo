@@ -682,8 +682,8 @@ $('fa-filter').addEventListener('change', filtrar);
 
 /* ── Click nas rows ─────────────────────────────────────── */
 document.querySelectorAll('#fa-items .fa-row').forEach(r => {
-    r.addEventListener('click',   () => goDetail(+r.dataset.id));
-    r.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') goDetail(+r.dataset.id); });
+    r.addEventListener('click',   () => goDetail(r.dataset.id));
+    r.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') goDetail(r.dataset.id); });
 });
 
 /* ── Auto-abrir via URL ─────────────────────────────────── */

@@ -63,9 +63,9 @@ $_idx_user = $usuario;
                 <div class="d-flex flex-wrap gap-4">
                     <?php
                     $stats = [
-                        ['3%',  'das propriedades\nrecebem ATER hoje'],
-                        ['6',   'espécies animais\ncobertos'],
-                        ['5',   'tópicos técnicos\npor espécie'],
+                        ['3%',  "das propriedades\nrecebem ATER hoje"],
+                        ['6',   "espécies animais\ncobertos"],
+                        ['5',   "tópicos técnicos\npor espécie"],
                     ];
                     foreach ($stats as $i => $s): ?>
                         <?php if ($i > 0): ?><div class="aa-stat-divider"></div><?php endif; ?>

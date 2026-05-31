@@ -1,0 +1,41 @@
+# =====================================================
+# AgroAmigo ATERPEC — Regras de segurança Apache
+# =====================================================
+
+# Sem listagem de diretórios
+Options -Indexes
+
+# ── Forçar HTTPS (Render usa X-Forwarded-Proto) ──────
+RewriteEngine On
+RewriteCond %{HTTP:X-Forwarded-Proto} =http
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ── Bloquear arquivos sensíveis ───────────────────────
+<FilesMatch "\.(sql|log|bak|bkp|env|sh|yml|yaml|md|gitignore|dockerignore|lock)$">
+    Require all denied
+</FilesMatch>
+
+# Bloqueia arquivos com ~ ou .old no nome (backups acidentais)
+<FilesMatch "(~|\.old|\.orig|\.swp|\.tmp)$">
+    Require all denied
+</FilesMatch>
+
+# Bloqueia config.php por segurança extra (em prod é gerado pelo entrypoint)
+<Files "config.php">
+    Require all denied
+</Files>
+
+# ── Headers de segurança HTTP via Apache ─────────────
+<IfModule mod_headers.c>
+    Header always unset X-Powered-By
+    Header always unset Server
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+    # HSTS — força HTTPS por 1 ano (só ativo em produção com HTTPS)
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>
+
+# ── Proteção de charset ───────────────────────────────
+AddDefaultCharset UTF-8

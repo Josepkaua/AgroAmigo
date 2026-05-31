@@ -12,8 +12,18 @@ if (usuario_logado()) {
 $erro    = '';
 $email_v = '';
 
+security_headers();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_verify();
+
+    // Honeypot: bots costumam preencher campos ocultos
+    if (!empty($_POST['website'])) {
+        // Simula delay e erro genérico — não revela a detecção
+        sleep(2);
+        $erro = 'E-mail ou senha incorretos.';
+        goto fim_post;
+    }
 
     $email   = trim($_POST['email'] ?? '');
     $senha   = $_POST['senha']      ?? '';
@@ -23,6 +33,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erro = 'Preencha e-mail e senha.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $erro = 'E-mail inválido.';
+    } elseif (ip_bloqueado_login()) {
+        $erro = 'Muitas tentativas. Aguarde alguns minutos e tente novamente.';
+        log_acesso('bloqueado', null, $email);
     } else {
         $pdo  = db();
         $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE email = :email LIMIT 1");
@@ -81,6 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
     }
+    fim_post:
 }
 
 $flash = get_flash();
@@ -215,6 +229,10 @@ $flash = get_flash();
 
         <form method="POST" action="login.php" novalidate>
             <?= csrf_field() ?>
+            <!-- Honeypot: bots preenchem, humanos não veem -->
+            <div style="display:none" aria-hidden="true">
+                <input type="text" name="website" tabindex="-1" autocomplete="off" value="">
+            </div>
 
             <div class="form-group">
                 <label class="form-label" for="email">E-mail</label>

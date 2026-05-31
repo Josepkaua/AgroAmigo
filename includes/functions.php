@@ -98,6 +98,33 @@ function log_erro(string $mensagem, ?string $arquivo = null, ?int $linha = null)
     } catch (Throwable) {}
 }
 
+// ─── Rate limiting por IP (login) ────────────────────
+function ip_bloqueado_login(): bool
+{
+    // Bloqueia IP com >= 10 falhas nos últimos 15 minutos
+    try {
+        $stmt = db()->prepare("
+            SELECT COUNT(*) FROM logs_acesso
+            WHERE ip = :ip
+              AND acao IN ('login_falhou', 'bloqueado')
+              AND created_at > NOW() - INTERVAL '15 minutes'
+        ");
+        $stmt->execute(['ip' => ip_real()]);
+        return (int)$stmt->fetchColumn() >= 10;
+    } catch (Throwable) {
+        return false; // em caso de erro no DB, não bloqueia
+    }
+}
+
+// ─── Headers de segurança (páginas sem header.php) ───
+function security_headers(): void
+{
+    header('X-Frame-Options: SAMEORIGIN');
+    header('X-Content-Type-Options: nosniff');
+    header('Referrer-Policy: strict-origin-when-cross-origin');
+    header('Permissions-Policy: geolocation=(), microphone=(), camera=()');
+}
+
 // ─── Paginação ───────────────────────────────────────────
 function paginar(int $total, int $por_pagina, int $pagina_atual): array
 {

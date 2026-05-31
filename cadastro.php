@@ -3,6 +3,7 @@ declare(strict_types=1);
 require_once 'includes/auth.php';
 
 session_init();
+security_headers();
 
 if (usuario_logado()) {
     header('Location: minha-conta.php');

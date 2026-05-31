@@ -22,6 +22,17 @@ function session_init(): void
 
     session_start();
 
+    // Timeout por inatividade: 2 horas sem ação destrói a sessão
+    $timeout = 7200;
+    if (!empty($_SESSION['_last_active']) && (time() - $_SESSION['_last_active']) > $timeout) {
+        $_SESSION = [];
+        session_destroy();
+        session_start();
+    }
+    if (!empty($_SESSION['usuario'])) {
+        $_SESSION['_last_active'] = time();
+    }
+
     // Verifica fingerprint do user-agent para detectar sequestro de sessão
     $ua_hash = md5($_SERVER['HTTP_USER_AGENT'] ?? '');
     if (!empty($_SESSION['_ua']) && $_SESSION['_ua'] !== $ua_hash) {

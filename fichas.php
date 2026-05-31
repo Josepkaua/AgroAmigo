@@ -437,8 +437,44 @@ function espEmoji(string $esp): string {
                 <div class="fa-section">
                     <div class="fa-sec-head">
                         <h3 class="fa-sec-title">📋 Informações Básicas</h3>
+                        <button class="fa-btn-add" id="btn-edit-info" type="button"><i class="bi bi-pencil"></i> Editar</button>
                     </div>
                     <div id="det-info" class="fa-info-grid"></div>
+                    <div class="fa-inline" id="form-edit" style="display:none">
+                        <div class="fa-i-grid">
+                            <div>
+                                <label class="fa-i-lbl">Brinco / ID <span style="color:#dc2626">*</span></label>
+                                <input type="text" id="edit-brinco" class="fa-i-inp" placeholder="Ex: #001 ou Mimosa">
+                            </div>
+                            <div>
+                                <label class="fa-i-lbl">Espécie <span style="color:#dc2626">*</span></label>
+                                <select id="edit-especie" class="fa-i-inp">
+                                    <option value="bovino">🐄 Bovino</option>
+                                    <option value="ave">🐔 Ave</option>
+                                    <option value="suino">🐷 Suíno</option>
+                                    <option value="caprino">🐐 Caprino</option>
+                                    <option value="ovino">🐑 Ovino</option>
+                                    <option value="peixe">🐟 Peixe</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="fa-i-lbl">Raça</label>
+                                <input type="text" id="edit-raca" class="fa-i-inp" placeholder="Ex: Nelore">
+                            </div>
+                            <div>
+                                <label class="fa-i-lbl">Data de nascimento</label>
+                                <input type="date" id="edit-data-nasc" class="fa-i-inp">
+                            </div>
+                            <div>
+                                <label class="fa-i-lbl">Peso ao nascer (kg)</label>
+                                <input type="number" id="edit-peso-nasc" class="fa-i-inp" step="0.1" min="0" placeholder="Ex: 32">
+                            </div>
+                        </div>
+                        <div class="fa-i-actions">
+                            <button class="fa-i-submit" id="btn-ok-edit" type="button">Salvar alterações</button>
+                            <button class="fa-i-cancel" id="btn-cx-edit" type="button">Cancelar</button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Pesagens -->
@@ -513,7 +549,8 @@ function espEmoji(string $esp): string {
 <script>
 const CSRF       = <?= json_encode(csrf_token()) ?>;
 const AUTO_OPEN  = <?= json_encode($auto_open_id) ?>;
-let   CUR_ANIMAL = null;
+let   CUR_ANIMAL      = null;
+let   CUR_ANIMAL_DATA = null;
 
 /* ── Utils ─────────────────────────────────────────────── */
 const $  = id => document.getElementById(id);
@@ -561,7 +598,9 @@ function goDetail(id) {
 /* ── Render detalhe ─────────────────────────────────────── */
 function renderDetail(d) {
     const a = d.animal;
+    CUR_ANIMAL_DATA = a;
     hd($('fa-loading'));
+    hd($('form-edit'));
 
     $('det-emoji').textContent = espEmoji(a.especie);
     $('det-nome').textContent  = a.brinco + (a.raca ? ' · '+a.raca : '');
@@ -612,7 +651,7 @@ function renderVac(rows) {
 }
 
 /* ── Pesagem: salvar ────────────────────────────────────── */
-$('btn-add-pes').onclick = () => { $('form-pes').style.display = $('form-pes').style.display?'':'none'; hd($('form-vac')); };
+$('btn-add-pes').onclick = () => { $('form-pes').style.display = $('form-pes').style.display?'':'none'; hd($('form-vac')); hd($('form-edit')); };
 $('btn-cx-pes').onclick  = () => hd($('form-pes'));
 $('btn-ok-pes').onclick  = async function() {
     const data = $('pes-data').value, peso = $('pes-peso').value.trim();
@@ -634,7 +673,7 @@ $('btn-ok-pes').onclick  = async function() {
 };
 
 /* ── Vacinação: salvar ──────────────────────────────────── */
-$('btn-add-vac').onclick = () => { $('form-vac').style.display = $('form-vac').style.display?'':'none'; hd($('form-pes')); };
+$('btn-add-vac').onclick = () => { $('form-vac').style.display = $('form-vac').style.display?'':'none'; hd($('form-pes')); hd($('form-edit')); };
 $('btn-cx-vac').onclick  = () => hd($('form-vac'));
 $('btn-ok-vac').onclick  = async function() {
     const nome = $('vac-nome').value.trim(), data = $('vac-data').value;
@@ -653,6 +692,57 @@ $('btn-ok-vac').onclick  = async function() {
             fetch(`fichas/animal-json.php?id=${CUR_ANIMAL}`).then(r=>r.json()).then(d=>renderVac(d.vacinacoes));
         } else alert(j.erro||'Erro ao salvar.');
     } finally { this.disabled=false; this.textContent='Salvar'; }
+};
+
+/* ── Editar animal ──────────────────────────────────────── */
+$('btn-edit-info').onclick = () => {
+    const f = $('form-edit');
+    if (f.style.display === 'none' || !f.style.display) {
+        const a = CUR_ANIMAL_DATA || {};
+        $('edit-brinco').value    = a.brinco || '';
+        $('edit-especie').value   = (a.especie || 'bovino').toLowerCase();
+        $('edit-raca').value      = a.raca || '';
+        $('edit-data-nasc').value = a.data_nascimento || '';
+        $('edit-peso-nasc').value = a.peso_nascimento_kg || '';
+        sh(f);
+        f.scrollIntoView({behavior:'smooth', block:'nearest'});
+    } else {
+        hd(f);
+    }
+    hd($('form-pes'));
+    hd($('form-vac'));
+};
+$('btn-cx-edit').onclick = () => hd($('form-edit'));
+$('btn-ok-edit').onclick = async function() {
+    const brinco  = $('edit-brinco').value.trim();
+    const especie = $('edit-especie').value;
+    if (!brinco || !especie) { alert('Brinco e espécie são obrigatórios.'); return; }
+    this.disabled = true; this.textContent = 'Salvando…';
+    try {
+        const r = await fetch('fichas/animal-editar.php', {
+            method: 'POST',
+            headers: {'Content-Type':'application/x-www-form-urlencoded'},
+            body: new URLSearchParams({
+                _csrf:              CSRF,
+                animal_id:          CUR_ANIMAL,
+                brinco,
+                especie,
+                raca:               $('edit-raca').value,
+                data_nascimento:    $('edit-data-nasc').value,
+                peso_nascimento_kg: $('edit-peso-nasc').value,
+            }),
+        });
+        const j = await r.json();
+        if (j.ok) {
+            hd($('form-edit'));
+            fetch(`fichas/animal-json.php?id=${CUR_ANIMAL}`).then(r => r.json()).then(renderDetail);
+        } else {
+            alert(j.erro || 'Erro ao salvar.');
+        }
+    } finally {
+        this.disabled = false;
+        this.textContent = 'Salvar alterações';
+    }
 };
 
 /* ── Botões nav ─────────────────────────────────────────── */

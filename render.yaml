@@ -14,9 +14,9 @@ services:
       - key: DB_NAME
         value: "postgres"
       - key: DB_USER
-        value: "postgres"
+        value: "agroamigo_app"   # usuário restrito — não usar postgres
       - key: DB_PASS
-        sync: false          # preencher no dashboard do Render
+        sync: false          # senha do agroamigo_app — preencher no Render
       - key: DB_SSL
         value: "require"
 

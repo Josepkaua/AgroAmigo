@@ -7,9 +7,12 @@ $pagina        = 'contato';
 $titulo_pagina = 'Falar com Técnico';
 
 $sucesso = false;
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['nome'])) {
-    // Aqui ficaria o envio real (email/API WhatsApp)
-    $sucesso = true;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_verify();
+    if (!empty($_POST['nome'])) {
+        // Aqui ficaria o envio real (email/API WhatsApp)
+        $sucesso = true;
+    }
 }
 
 require 'includes/header.php';
@@ -79,6 +82,7 @@ require 'includes/header.php';
                     <?php endif; ?>
 
                     <form method="POST" action="contato.php#formulario" id="formulario">
+                        <?= csrf_field() ?>
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="aa-label" for="nome">Nome completo *</label>

@@ -13,7 +13,7 @@ if (!$usuario) {
 }
 
 // CSRF
-if (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf'] ?? '')) {
+if (!hash_equals($_SESSION['csrf'] ?? '', $_POST['csrf'] ?? '')) {
     http_response_code(403);
     echo json_encode(['ok' => false, 'erro' => 'Token inválido.']);
     exit;

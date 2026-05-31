@@ -69,7 +69,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 function enviar_email_reset(string $para, string $nome, string $link): void
 {
-    $primeiro = explode(' ', $nome)[0];
+    // Valida email para evitar header injection
+    if (!filter_var($para, FILTER_VALIDATE_EMAIL)) {
+        error_log('[AgroAmigo] Email de reset inválido: ' . $para);
+        return;
+    }
+
+    // Remove caracteres perigosos do nome (evita header injection via $nome)
+    $primeiro = preg_replace('/[^\p{L}\s\-]/u', '', explode(' ', $nome)[0]);
+
     $assunto  = 'Redefinição de senha — AgroAmigo ATERPEC';
     $corpo    = "Olá, {$primeiro}!\n\n"
               . "Recebemos um pedido para redefinir a senha da sua conta no AgroAmigo ATERPEC.\n\n"
@@ -78,10 +86,13 @@ function enviar_email_reset(string $para, string $nome, string $link): void
               . "Se não foi você, ignore este e-mail. Sua senha não será alterada.\n\n"
               . "— Equipe AgroAmigo ATERPEC";
 
-    $headers  = "From: AgroAmigo ATERPEC <noreply@agroamigo.com.br>\r\n";
+    $headers  = "From: noreply@agroamigo.com.br\r\n";
     $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 
-    @mail($para, $assunto, $corpo, $headers);
+    $ok = mail($para, $assunto, $corpo, $headers);
+    if (!$ok) {
+        error_log('[AgroAmigo] Falha ao enviar email de reset para: ' . $para);
+    }
 }
 ?>
 <!DOCTYPE html>

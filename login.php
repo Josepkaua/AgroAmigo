@@ -67,10 +67,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $dest = ($user['role'] === 'admin') ? 'gestao/index.php' : 'index.php';
 
-            // Redireciona para onde o usuário queria ir antes de ser barrado
+            // Redireciona para onde o usuário queria ir (apenas URLs relativas do próprio site)
             if (!empty($_SESSION['login_next'])) {
-                $dest = $_SESSION['login_next'];
+                $next = $_SESSION['login_next'];
                 unset($_SESSION['login_next']);
+                // Aceita apenas caminhos relativos (começa com / mas não com //)
+                if ($next && str_starts_with($next, '/') && !str_starts_with($next, '//')) {
+                    $dest = $next;
+                }
             }
 
             header('Location: ' . $dest);

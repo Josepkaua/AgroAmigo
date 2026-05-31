@@ -8,6 +8,12 @@ $animais_pages = ['bovinos','aves','suinos','caprinos','ovinos','peixes'];
 require_once __DIR__ . '/auth.php';
 session_init();
 $_nav_user = usuario_logado();
+
+// ─── Headers de segurança HTTP ───────────────────────────
+header('X-Frame-Options: SAMEORIGIN');
+header('X-Content-Type-Options: nosniff');
+header('Referrer-Policy: strict-origin-when-cross-origin');
+header('Permissions-Policy: geolocation=(), microphone=(), camera=()');
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">

@@ -40,9 +40,9 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public
 -- (impede a aplicação de criar/dropar tabelas)
 REVOKE CREATE ON SCHEMA public FROM agroamigo_app;
 
--- ── 7. Trocar senha do postgres (superuser) ───────────
--- Gera uma nova senha longa — guarde em local seguro
-ALTER USER postgres PASSWORD 'TROQUE_POR_OUTRA_SENHA_FORTE_AQUI';
+-- ── 7. Trocar senha do postgres ──────────────────────
+-- NÃO é possível via SQL no Supabase. Faça pelo painel:
+-- Supabase → Settings → Database → Database Password → Reset
 
 -- ── 8. Verificar o que foi criado ────────────────────
 SELECT usename, usesuper, usecreatedb, usecreaterole

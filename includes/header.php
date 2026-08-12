@@ -9,6 +9,12 @@ require_once __DIR__ . '/auth.php';
 session_init();
 $_nav_user = usuario_logado();
 
+// ─── SEO: description/OG — usa $meta_descricao se a página definir,
+// senão cai na descrição da espécie ($animal), senão um texto padrão ───
+$_meta_desc = $meta_descricao ?? ($animal['descricao'] ?? 'Assistência técnica rural digital e gratuita para pequenos produtores do Maranhão: chatbot no WhatsApp e conteúdo técnico por espécie animal (bovinos, aves, suínos, caprinos, ovinos e peixes).');
+$_base_url  = defined('APP_URL') ? rtrim(APP_URL, '/') : '';
+$_og_image  = $_base_url . '/assets/img/favicon.png';
+
 // ─── Headers de segurança HTTP ───────────────────────────
 header('X-Frame-Options: SAMEORIGIN');
 header('X-Content-Type-Options: nosniff');
@@ -21,6 +27,20 @@ header('Permissions-Policy: geolocation=(), microphone=(), camera=()');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($titulo_pagina) ?> — AgroAmigo ATERPEC</title>
+
+    <meta name="description" content="<?= htmlspecialchars($_meta_desc) ?>">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="AgroAmigo ATERPEC">
+    <meta property="og:title" content="<?= htmlspecialchars($titulo_pagina) ?> — AgroAmigo ATERPEC">
+    <meta property="og:description" content="<?= htmlspecialchars($_meta_desc) ?>">
+    <meta property="og:image" content="<?= htmlspecialchars($_og_image) ?>">
+    <meta property="og:locale" content="pt_BR">
+    <meta name="theme-color" content="#166534">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16.png">
+    <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">

@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once 'includes/auth.php';
+require_once 'auth/google_config.php';
 
 session_init();
 
@@ -25,75 +26,112 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         goto fim_post;
     }
 
-    $email   = trim($_POST['email'] ?? '');
+    // O campo aceita e-mail OU celular — o produtor rural muitas vezes não tem e-mail
+    $ident   = trim($_POST['email'] ?? '');
     $senha   = $_POST['senha']      ?? '';
-    $email_v = $email;
+    $email_v = $ident;
 
-    if (!$email || !$senha) {
-        $erro = 'Preencha e-mail e senha.';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $erro = 'E-mail inválido.';
-    } elseif (ip_bloqueado_login()) {
-        $erro = 'Muitas tentativas. Aguarde alguns minutos e tente novamente.';
-        log_acesso('bloqueado', null, $email);
+    // MENSAGEM ÚNICA para qualquer falha de autenticação.
+    // Antes o site respondia coisas diferentes para "conta suspensa", "conta
+    // inativa" e "restam N tentativas" — isso confirmava para qualquer pessoa
+    // quais e-mails existem no sistema (enumeração de usuários) e ainda entregava
+    // o estado do bloqueio. Agora tudo cai na mesma frase.
+    $ERRO_GENERICO = 'E-mail/celular ou senha incorretos.';
+
+    // Hash descartável usado quando o usuário não existe, só para gastar o mesmo
+    // tempo de CPU do password_verify real. Sem isso, "usuário inexistente"
+    // respondia na hora e "senha errada" demorava ~100ms do bcrypt — a diferença
+    // de tempo denunciava quais contas existem.
+    $HASH_FALSO = '$2y$12$usuarioInexistenteUsuarioInexistenteUsuarioInexistente.aa';
+
+    if ($ident === '' || $senha === '') {
+        $erro = 'Preencha e-mail ou celular, e a senha.';
+        goto fim_post;
+    }
+
+    $por_telefone = parece_telefone($ident);
+    $tel_norm     = $por_telefone ? tel_normalizar($ident) : null;
+
+    if (!$por_telefone && !filter_var($ident, FILTER_VALIDATE_EMAIL)) {
+        $erro = 'Digite um e-mail válido ou um celular com DDD.';
+        goto fim_post;
+    }
+    if ($por_telefone && $tel_norm === null) {
+        $erro = 'Celular inválido. Use DDD + número, ex.: (99) 98765-4321.';
+        goto fim_post;
+    }
+
+    if (ip_bloqueado_login()) {
+        $erro = 'Muitas tentativas a partir deste dispositivo. Aguarde alguns minutos.';
+        log_acesso('bloqueado', null, mb_substr($ident, 0, 190));
+        goto fim_post;
+    }
+
+    $pdo = db();
+    if ($por_telefone) {
+        $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE telefone_norm = :v LIMIT 1");
+        $stmt->execute(['v' => $tel_norm]);
     } else {
-        $pdo  = db();
-        $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE email = :email LIMIT 1");
-        $stmt->execute(['email' => $email]);
-        $user = $stmt->fetch();
+        $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE lower(email) = lower(:v) LIMIT 1");
+        $stmt->execute(['v' => $ident]);
+    }
+    $user = $stmt->fetch();
 
-        if (!$user) {
-            $erro = 'E-mail ou senha incorretos.';
-            log_acesso('login_falhou', null, $email);
-        } elseif ($user['status'] === 'suspenso') {
-            $erro = 'Conta suspensa. Entre em contato com o suporte.';
-        } elseif ($user['status'] === 'inativo') {
-            $erro = 'Conta inativa.';
-        } elseif (!empty($user['bloqueado_ate']) && strtotime($user['bloqueado_ate']) > time()) {
-            $min  = (int) ceil((strtotime($user['bloqueado_ate']) - time()) / 60);
-            $erro = "Muitas tentativas incorretas. Tente novamente em {$min} minuto(s).";
-            log_acesso('bloqueado', $user['id'], $email);
-        } elseif (!password_verify($senha, $user['senha_hash'])) {
-            $tentativas = (int)$user['tentativas_login'] + 1;
+    // Conta criada pelo Google não tem senha local: senha_hash começa com '!'.
+    $so_google = $user && str_starts_with((string) $user['senha_hash'], '!');
+
+    $bloqueado = $user
+        && !empty($user['bloqueado_ate'])
+        && strtotime((string) $user['bloqueado_ate']) > time();
+
+    // password_verify roda SEMPRE, mesmo sem usuário, para o tempo de resposta
+    // não diferenciar os casos.
+    $senha_ok = password_verify($senha, $user && !$so_google ? $user['senha_hash'] : $HASH_FALSO);
+
+    if (!$user || $so_google || $bloqueado || $user['status'] !== 'ativo' || !$senha_ok) {
+
+        // Só conta tentativa quando a conta existe, está ativa e a senha errou —
+        // assim o contador não é usado para descobrir se a conta existe.
+        if ($user && !$bloqueado && $user['status'] === 'ativo' && !$so_google) {
+            $tentativas = (int) $user['tentativas_login'] + 1;
             $bloquear   = null;
             if ($tentativas >= 5) {
                 $bloquear   = date('Y-m-d H:i:s', strtotime('+15 minutes'));
                 $tentativas = 0;
             }
-            $pdo->prepare("
-                UPDATE usuarios SET tentativas_login = :t, bloqueado_ate = :b WHERE id = :id
-            ")->execute(['t' => $tentativas, 'b' => $bloquear, 'id' => $user['id']]);
-
-            $restam = max(0, 5 - $tentativas);
-            $erro   = $tentativas === 0
-                ? 'Conta bloqueada por 15 minutos após múltiplas tentativas.'
-                : "E-mail ou senha incorretos. ({$restam} tentativa(s) restante(s))";
-            log_acesso('login_falhou', $user['id'], $email);
-        } else {
-            $pdo->prepare("
-                UPDATE usuarios SET tentativas_login = 0, bloqueado_ate = NULL, ultimo_login = NOW()
-                WHERE id = :id
-            ")->execute(['id' => $user['id']]);
-
-            login_usuario($user);
-            log_acesso('login_ok', $user['id'], $email);
-
-            $dest = ($user['role'] === 'admin') ? 'gestao/index.php' : 'index.php';
-
-            // Redireciona para onde o usuário queria ir (apenas URLs relativas do próprio site)
-            if (!empty($_SESSION['login_next'])) {
-                $next = $_SESSION['login_next'];
-                unset($_SESSION['login_next']);
-                // Aceita apenas caminhos relativos (começa com / mas não com //)
-                if ($next && str_starts_with($next, '/') && !str_starts_with($next, '//')) {
-                    $dest = $next;
-                }
-            }
-
-            header('Location: ' . $dest);
-            exit;
+            $pdo->prepare("UPDATE usuarios SET tentativas_login = :t, bloqueado_ate = :b WHERE id = :id")
+                ->execute(['t' => $tentativas, 'b' => $bloquear, 'id' => $user['id']]);
         }
+
+        $erro = $ERRO_GENERICO;
+        // Dica útil e que não vaza nada: quem tem conta só-Google não sabe por quê falha.
+        if ($so_google) {
+            $erro = 'Esta conta entra pelo Google. Use o botão "Entrar com Google" acima.';
+        }
+        log_acesso('login_falhou', $user['id'] ?? null, mb_substr($ident, 0, 190));
+        goto fim_post;
     }
+
+    // ── Autenticado ──
+    $pdo->prepare("
+        UPDATE usuarios SET tentativas_login = 0, bloqueado_ate = NULL, ultimo_login = NOW()
+        WHERE id = :id
+    ")->execute(['id' => $user['id']]);
+
+    login_usuario($user);
+    log_acesso('login_ok', $user['id'], $user['email']);
+
+    $dest = ($user['role'] === 'admin') ? 'gestao/index.php' : 'index.php';
+    if (!empty($_SESSION['login_next'])) {
+        $next = $_SESSION['login_next'];
+        unset($_SESSION['login_next']);
+        $seguro = url_interna($next, '');   // rejeita //evil.com, /\evil.com, javascript:
+        if ($seguro !== '') $dest = $seguro;
+    }
+
+    header('Location: ' . $dest);
+    exit;
+
     fim_post:
 }
 
@@ -143,9 +181,29 @@ $flash = get_flash();
         .auth-title{font-size:26px;font-weight:800;color:#111827;margin-bottom:6px}
         .auth-sub{font-size:14px;color:#6b7280;margin-bottom:28px}
 
+        /* Entrar com Google */
+        .btn-google{
+            display:flex;align-items:center;justify-content:center;gap:10px;
+            width:100%;padding:11px 14px;margin-bottom:20px;
+            border:1.5px solid #e5e7eb;border-radius:10px;background:#fff;
+            font-size:14px;font-weight:600;color:#3c4043;font-family:inherit;
+            cursor:pointer;transition:background .15s,border-color .15s,box-shadow .15s;
+        }
+        .btn-google:hover{background:#f8fafc;border-color:#d1d5db;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        .btn-google:focus-visible{outline:none;border-color:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,.18)}
+
+        .auth-divisor{
+            display:flex;align-items:center;gap:12px;
+            margin:0 0 20px;color:#9ca3af;font-size:12px;
+        }
+        .auth-divisor::before,.auth-divisor::after{
+            content:'';flex:1;height:1px;background:#e5e7eb;
+        }
+
         /* Form */
         .form-label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#374151;margin-bottom:5px}
         .form-group{margin-bottom:18px}
+        .form-hint{display:block;margin-top:6px;font-size:11.5px;color:#9ca3af;line-height:1.45}
         .form-input{
             display:block;width:100%;
             border:1.5px solid #e5e7eb;border-radius:10px;
@@ -227,6 +285,20 @@ $flash = get_flash();
         </div>
         <?php endif; ?>
 
+        <?php if (google_configurado()): ?>
+        <a href="auth/google.php" class="btn-google">
+            <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+                <path fill="#4285F4" d="M45.1 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h11.8c-.5 2.7-2 5-4.4 6.6v5.5h7.1c4.2-3.8 6.6-9.5 6.6-16.1z"/>
+                <path fill="#34A853" d="M24 46c6 0 11-2 14.6-5.4l-7.1-5.5c-2 1.3-4.5 2.1-7.5 2.1-5.8 0-10.6-3.9-12.4-9.1H4.3v5.7C7.9 41 15.4 46 24 46z"/>
+                <path fill="#FBBC05" d="M11.6 28.1c-.5-1.3-.7-2.7-.7-4.1s.3-2.8.7-4.1v-5.7H4.3C2.8 17.1 2 20.4 2 24s.8 6.9 2.3 9.8l7.3-5.7z"/>
+                <path fill="#EA4335" d="M24 10.8c3.3 0 6.2 1.1 8.5 3.3l6.3-6.3C35 4.3 30 2 24 2 15.4 2 7.9 7 4.3 14.2l7.3 5.7c1.8-5.2 6.6-9.1 12.4-9.1z"/>
+            </svg>
+            Entrar com Google
+        </a>
+
+        <div class="auth-divisor"><span>ou entre com seus dados</span></div>
+        <?php endif; ?>
+
         <form method="POST" action="login.php" novalidate>
             <?= csrf_field() ?>
             <!-- Honeypot: bots preenchem, humanos não veem -->
@@ -235,11 +307,13 @@ $flash = get_flash();
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="email">E-mail</label>
-                <input type="email" id="email" name="email"
+                <label class="form-label" for="email">E-mail ou celular</label>
+                <input type="text" id="email" name="email"
                        value="<?= h($email_v) ?>"
-                       class="form-input" placeholder="seu@email.com"
-                       required autocomplete="email" autofocus>
+                       class="form-input" placeholder="seu@email.com ou (99) 98765-4321"
+                       required autocomplete="username" autofocus
+                       inputmode="email" autocapitalize="none" spellcheck="false">
+                <small class="form-hint">Pode entrar com o e-mail ou com o número do seu celular.</small>
             </div>
 
             <div class="form-group">

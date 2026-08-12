@@ -1,19 +1,46 @@
 <?php
 declare(strict_types=1);
 require_once 'includes/auth.php';
-require_login('index.php');
+session_init(); // conteúdo público — não exige login
 
 $pagina        = 'contato';
 $titulo_pagina = 'Falar com Técnico';
 
-$sucesso = false;
+$sucesso     = false;
+$erro_envio  = false;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_verify();
-    if (!empty($_POST['nome'])) {
-        // Aqui ficaria o envio real (email/API WhatsApp)
-        $sucesso = true;
+    $nome     = trim($_POST['nome']     ?? '');
+    $mensagem = trim($_POST['mensagem'] ?? '');
+
+    if ($nome !== '' && $mensagem !== '') {
+        try {
+            db()->prepare("
+                INSERT INTO mensagens_contato (usuario_id, nome, telefone, animal, topico, mensagem, ip)
+                VALUES (:uid, :nome, :tel, :animal, :topico, :msg, :ip)
+            ")->execute([
+                'uid'    => usuario_logado()['id'] ?? null,
+                'nome'   => $nome,
+                'tel'    => trim($_POST['telefone'] ?? '') ?: null,
+                'animal' => trim($_POST['animal']   ?? '') ?: null,
+                'topico' => trim($_POST['topico']   ?? '') ?: null,
+                'msg'    => $mensagem,
+                'ip'     => ip_real(),
+            ]);
+            $sucesso = true;
+        } catch (Throwable $e) {
+            log_erro('Falha ao salvar mensagem de contato: ' . $e->getMessage(), __FILE__, __LINE__);
+            $erro_envio = true;
+        }
     }
 }
+
+// Chatbot no WhatsApp — só mostra o link quando o número estiver configurado
+$whatsapp_numero = defined('WHATSAPP_NUMERO') ? trim(WHATSAPP_NUMERO) : '';
+$whatsapp_pronto = $whatsapp_numero !== '';
+$whatsapp_link   = $whatsapp_pronto
+    ? 'https://wa.me/' . $whatsapp_numero . '?text=' . rawurlencode('Olá! Quero acessar o ATERPEC')
+    : null;
 
 require 'includes/header.php';
 ?>
@@ -58,10 +85,20 @@ require 'includes/header.php';
                         <li><i class="bi bi-check-circle-fill me-2"></i> Funciona mesmo com internet lenta</li>
                         <li><i class="bi bi-check-circle-fill me-2"></i> Informações sobre 6 espécies animais</li>
                     </ul>
-                    <a href="https://wa.me/5500000000000?text=Olá!%20Quero%20acessar%20o%20ATERPEC"
+                    <?php if ($whatsapp_pronto): ?>
+                    <a href="<?= h($whatsapp_link) ?>"
                        target="_blank" rel="noopener" class="btn aa-btn-whatsapp w-100 aa-btn-lg">
                         <i class="bi bi-whatsapp me-2"></i> Abrir Chatbot no WhatsApp
                     </a>
+                    <?php else: ?>
+                    <button type="button" class="btn aa-btn-whatsapp w-100 aa-btn-lg" disabled
+                            style="opacity:.55;cursor:not-allowed" title="Chatbot em fase final de configuração">
+                        <i class="bi bi-whatsapp me-2"></i> Chatbot no WhatsApp — em breve
+                    </button>
+                    <p class="text-center mt-2 small" style="color: rgba(255,255,255,.6);">
+                        Ainda estamos configurando o número oficial. Por enquanto, use o formulário ao lado.
+                    </p>
+                    <?php endif; ?>
                     <p class="text-center mt-3 small" style="color: rgba(255,255,255,.6);">
                         Projeto ATERPEC — Verde Conecta / UEMA
                     </p>
@@ -77,7 +114,12 @@ require 'includes/header.php';
                     <?php if ($sucesso): ?>
                     <div class="aa-alert-success mb-4">
                         <i class="bi bi-check-circle-fill me-2"></i>
-                        Mensagem enviada com sucesso! Nossa equipe entrará em contato em breve.
+                        Mensagem recebida! Nossa equipe técnica vai analisar e entrar em contato em breve.
+                    </div>
+                    <?php elseif ($erro_envio): ?>
+                    <div class="alert alert-danger mb-4">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        Não conseguimos salvar sua mensagem agora. Tente novamente ou use o WhatsApp ao lado.
                     </div>
                     <?php endif; ?>
 

@@ -9,15 +9,28 @@ function session_init(): void
 {
     if (session_status() !== PHP_SESSION_NONE) return;
 
+    // Está sob HTTPS? No Render o TLS termina no proxy, então o PHP só descobre
+    // pelo cabeçalho X-Forwarded-Proto.
+    $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+          || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+
     ini_set('session.cookie_httponly', '1');
     ini_set('session.use_strict_mode', '1');
-    ini_set('session.cookie_samesite', 'Strict');
+    ini_set('session.cookie_samesite', 'Lax');
+    // Sem isto o cookie de sessão também trafega em http — o navegador manda o
+    // cookie ANTES do redirecionamento pra https do .htaccess, e num Wi-Fi aberto
+    // isso entrega a sessão. Em localhost fica desligado pra não quebrar o XAMPP.
+    ini_set('session.cookie_secure', $https ? '1' : '0');
 
     session_set_cookie_params([
         'lifetime' => 0,
         'path'     => '/',
+        'secure'   => $https,
         'httponly' => true,
-        'samesite' => 'Strict',
+        // 'Lax' em vez de 'Strict': com Strict o cookie NÃO é enviado quando o
+        // usuário volta do Google (navegação vinda de outro site), o que quebraria
+        // o login com Google. Lax mantém a proteção contra CSRF nos POSTs.
+        'samesite' => 'Lax',
     ]);
 
     session_start();

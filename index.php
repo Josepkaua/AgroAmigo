@@ -230,6 +230,20 @@ $_saud   = $_hora < 12 ? 'Bom dia' : ($_hora < 18 ? 'Boa tarde' : 'Boa noite');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AgroAmigo ATERPEC — Assistência Técnica Rural Digital</title>
+
+    <meta name="description" content="Assistência técnica rural digital e gratuita para pequenos produtores do Maranhão: chatbot no WhatsApp e conteúdo técnico por espécie animal (bovinos, aves, suínos, caprinos, ovinos e peixes). Projeto ATERPEC — Verde Conecta / UEMA.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="AgroAmigo ATERPEC">
+    <meta property="og:title" content="AgroAmigo ATERPEC — Assistência Técnica Rural Digital">
+    <meta property="og:description" content="Assistência técnica rural digital e gratuita para pequenos produtores do Maranhão: chatbot no WhatsApp e conteúdo técnico por espécie animal.">
+    <meta property="og:image" content="<?= htmlspecialchars((defined('APP_URL') ? rtrim(APP_URL, '/') : '') . '/assets/img/favicon.png') ?>">
+    <meta property="og:locale" content="pt_BR">
+    <meta name="theme-color" content="#166534">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16.png">
+    <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -445,6 +459,7 @@ $_saud   = $_hora < 12 ? 'Bom dia' : ($_hora < 18 ? 'Boa tarde' : 'Boa noite');
 <nav class="lp-nav" style="position:relative">
     <div class="lp-logo">🌱 Agro<strong>Amigo</strong></div>
     <div class="lp-nav-links">
+        <a href="home.php"  class="lp-nav-link">Conteúdo Técnico</a>
         <a href="#sobre"    class="lp-nav-link">Sobre</a>
         <a href="#funciona" class="lp-nav-link">Como funciona</a>
         <a href="#equipe"   class="lp-nav-link">Equipe</a>
@@ -459,6 +474,7 @@ $_saud   = $_hora < 12 ? 'Bom dia' : ($_hora < 18 ? 'Boa tarde' : 'Boa noite');
 
     <!-- Menu mobile -->
     <div class="lp-mob-menu" id="lp-mob-menu" aria-hidden="true">
+        <a href="home.php"  class="lp-mob-link">Conteúdo Técnico</a>
         <a href="#sobre"    class="lp-mob-link">Sobre</a>
         <a href="#funciona" class="lp-mob-link">Como funciona</a>
         <a href="#equipe"   class="lp-mob-link">Equipe</a>
@@ -494,6 +510,11 @@ $_saud   = $_hora < 12 ? 'Bom dia' : ($_hora < 18 ? 'Boa tarde' : 'Boa noite');
                         <i class="bi bi-box-arrow-in-right"></i> Já tenho conta
                     </a>
                 </div>
+                <p style="margin:-24px 0 28px">
+                    <a href="home.php" style="color:rgba(255,255,255,.75);font-size:13px;font-weight:600;text-decoration:underline;text-underline-offset:3px">
+                        Prefere só consultar? Veja o conteúdo técnico sem criar conta →
+                    </a>
+                </p>
                 <div class="lp-hero-meta">
                     <div class="lp-hero-meta-item"><i class="bi bi-check-circle-fill"></i> 100% gratuito</div>
                     <div class="lp-hero-meta-item"><i class="bi bi-shield-fill-check"></i> Dados seguros</div>

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once 'includes/auth.php';
-require_login('index.php');
+session_init(); // conteúdo público — não exige login
 
 $pagina        = 'caprinos';
 $titulo_pagina = 'Caprinos';
@@ -12,7 +12,7 @@ $animal = [
     'imagem'   => 'https://images.unsplash.com/photo-1560819400-434c188f63ef?w=1400&q=80&auto=format&fit=crop',
     'descricao'=> 'A caprinocultura é uma das atividades mais importantes da agricultura familiar maranhense. Cabras são animais rústicos, adaptados ao clima semiárido e muito importantes para a geração de renda.',
     'racas' => [
-        ['emoji'=>'🐐','nome'=>'Anglo-nubiano', 'tipo'=>'Leite/Misto','imagem'=>'https://images.unsplash.com/photo-1536090373681-8e240a4866cf?w=600&q=80&auto=format&fit=crop','desc'=>'Raça de dupla aptidão originada no Reino Unido, com orelhas longas e pendentes e perfil nasal convexo (ariano). Produção: 2–4 litros/dia com 4,5–5,0% de gordura — leite superior para queijo artesanal. Machos 70–100 kg, fêmeas 50–70 kg. Prolificidade 1,6–2,0 crias/parto. Bem distribuída no Nordeste e base dos cruzamentos leiteiros do Maranhão.'],
+        ['emoji'=>'🐐','nome'=>'Anglo-nubiano', 'tipo'=>'Leite/Misto','imagem'=>'assets/img/racas/caprinos/anglo-nubiano.jpg','desc'=>'Raça de dupla aptidão originada no Reino Unido, com orelhas longas e pendentes e perfil nasal convexo (ariano). Produção: 2–4 litros/dia com 4,5–5,0% de gordura — leite superior para queijo artesanal. Machos 70–100 kg, fêmeas 50–70 kg. Prolificidade 1,6–2,0 crias/parto. Bem distribuída no Nordeste e base dos cruzamentos leiteiros do Maranhão.'],
         ['emoji'=>'🐑','nome'=>'Boer',          'tipo'=>'Corte',      'imagem'=>'https://images.unsplash.com/photo-1528127044085-fdef44dd867c?w=600&q=80&auto=format&fit=crop','desc'=>'Raça sul-africana especializada em carne: corpo largo e musculoso, pelagem branca com cabeça e pescoço marrom-avermelhados. F1 com SRD: abate com 30–35 kg em 6–8 meses, rendimento de carcaça 48–52%. Conversão alimentar 4–5:1. Principal ferramenta de melhoramento do rebanho caprino nordestino — usado exclusivamente em cruzamento terminal.'],
         ['emoji'=>'🐐','nome'=>'SRD (Comum)',   'tipo'=>'Misto',      'imagem'=>'https://images.unsplash.com/photo-1593750439808-958d28558592?w=600&q=80&auto=format&fit=crop','desc'=>'Caprinos sem padrão racial definido, descendentes de raças ibéricas introduzidas no século XVI, com séculos de seleção natural para o semiárido. Peso adulto 25–45 kg, prolificidade 1,4–1,7 crias/parto. Extremamente rústicos: toleram seca, calor extremo e pastagens de caatinga/cerrado maranhense. Custo de manutenção muito baixo — base da caprinocultura familiar do Maranhão.'],
     ],

@@ -32,16 +32,17 @@ $_img_hero = $animal['imagem'] ?? '';
         </div>
         <div class="row g-4 justify-content-center">
             <?php foreach ($animal['racas'] as $raca): ?>
+            <?php $_raca_img = img_raca($raca['imagem'] ?? ''); ?>
             <div class="col-md-6 col-lg-4">
                 <div class="aa-raca-card h-100">
-                    <?php if (!empty($raca['imagem'])): ?>
-                    <img src="<?= htmlspecialchars($raca['imagem']) ?>"
+                    <?php if ($_raca_img !== ''): ?>
+                    <img src="<?= htmlspecialchars($_raca_img) ?>"
                          alt="<?= htmlspecialchars($raca['nome']) ?>"
                          class="aa-raca-card-img"
                          loading="lazy">
                     <?php endif; ?>
                     <div class="aa-raca-body">
-                        <?php if (empty($raca['imagem'])): ?>
+                        <?php if ($_raca_img === ''): ?>
                         <div class="aa-raca-emoji"><?= $raca['emoji'] ?></div>
                         <?php endif; ?>
                         <div class="aa-raca-nome"><?= htmlspecialchars($raca['nome']) ?></div>

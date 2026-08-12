@@ -5,3 +5,8 @@ config.php
 /vendor/
 node_modules/
 .claude/
+
+# rascunhos locais (nao versionar)
+.backup-antes-claude/
+.lixo-locks/
+*.zip

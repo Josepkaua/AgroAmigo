@@ -22,10 +22,16 @@ define('DB_SSL',       '${DB_SSL:-require}');
 define('SUPABASE_URL', '${SUPABASE_URL}');
 define('SUPABASE_KEY', '${SUPABASE_KEY}');
 
-define('APP_SECRET',   '${APP_SECRET}');
-define('APP_URL',      '${APP_URL}');
-define('APP_ENV',      'production');
-define('APP_DEBUG',    false);
+// Login com Google (OAuth 2.0). Se vierem vazios, o botão simplesmente não
+// aparece e o site continua funcionando com e-mail/celular + senha.
+define('GOOGLE_CLIENT_ID',     '${GOOGLE_CLIENT_ID:-}');
+define('GOOGLE_CLIENT_SECRET', '${GOOGLE_CLIENT_SECRET:-}');
+
+define('APP_SECRET',      '${APP_SECRET}');
+define('APP_URL',         '${APP_URL}');
+define('WHATSAPP_NUMERO', '${WHATSAPP_NUMERO:-}');
+define('APP_ENV',         'production');
+define('APP_DEBUG',       false);
 
 ini_set('display_errors', '0');
 ini_set('log_errors',     '1');

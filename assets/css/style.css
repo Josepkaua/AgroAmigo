@@ -316,7 +316,15 @@ ul    { list-style: none; padding: 0; }
 }
 .aa-raca-card:hover { transform: translateY(-4px); }
 .aa-raca-card-img {
-    width: 100%; height: 170px; object-fit: cover; display: block;
+    /* Antes: height fixo de 170px. Como o card tem largura variável, isso dava
+       uma faixa muito achatada (2,2:1) e cortava cabeça e patas do animal —
+       e as fotos vinham recortadas em faixa, então era corte sobre corte.
+       Com aspect-ratio a caixa acompanha a proporção da própria foto, então o
+       animal aparece inteiro em qualquer largura de card. */
+    width: 100%; height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover; object-position: center;
+    display: block; background: #f0fdf4;
 }
 .aa-raca-body { padding: 18px 22px 22px; }
 .aa-raca-emoji { font-size: 36px; margin-bottom: 10px; }
@@ -816,7 +824,7 @@ ul    { list-style: none; padding: 0; }
     .aa-hero { min-height: auto; padding: 90px 0 60px; }
     .aa-whatsapp-card, .aa-contact-card { padding: 24px; }
     .aa-about-box { padding: 32px 24px; }
-    .aa-raca-card-img { height: 140px; }
+    .aa-raca-card-img { height: auto; }  /* aspect-ratio cuida da altura */
     .aa-cta-box { padding: 32px 20px; }
     .aa-cta-title { font-size: 20px; }
     .aa-cta-desc  { font-size: 14px; }
@@ -837,7 +845,7 @@ ul    { list-style: none; padding: 0; }
     .aa-ficha-card { padding: 20px 16px; }
 
     /* Raças */
-    .aa-raca-card-img { height: 120px; }
+    .aa-raca-card-img { height: auto; }  /* aspect-ratio cuida da altura */
     .aa-raca-body     { padding: 14px 16px 16px; }
 
     /* WhatsApp / contato */

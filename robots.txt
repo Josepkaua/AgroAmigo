@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /gestao/
+Disallow: /fichas/
+Disallow: /includes/
+Disallow: /sql/
+Disallow: /uploads/

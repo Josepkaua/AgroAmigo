@@ -24,31 +24,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $campos = compact('nome', 'email') + ['telefone' => $tel];
 
+    // O celular vira também forma de login, então precisa ser normalizado e único
+    $tel_norm = tel_normalizar($tel);
+
     if (!$nome)                                             $erros[] = 'Nome é obrigatório.';
+    if (mb_strlen($nome) > 150)                             $erros[] = 'Nome muito longo.';
     if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) $erros[] = 'E-mail inválido.';
+    if ($tel !== '' && $tel_norm === null)                  $erros[] = 'Celular inválido. Use DDD + número, ex.: (99) 98765-4321.';
     if (strlen($senha) < 8)                                 $erros[] = 'Senha deve ter pelo menos 8 caracteres.';
+    if (strlen($senha) > 200)                               $erros[] = 'Senha muito longa.';
     if ($senha !== $confirma)                               $erros[] = 'As senhas não conferem.';
     if (!preg_match('/[A-Z]/', $senha))                     $erros[] = 'Senha precisa de ao menos uma letra maiúscula.';
     if (!preg_match('/[0-9]/', $senha))                     $erros[] = 'Senha precisa de ao menos um número.';
 
     if (!$erros) {
         $pdo   = db();
-        $exist = $pdo->prepare("SELECT id FROM usuarios WHERE email = :e LIMIT 1");
+        $exist = $pdo->prepare("SELECT id FROM usuarios WHERE lower(email) = lower(:e) LIMIT 1");
         $exist->execute(['e' => $email]);
         if ($exist->fetch()) $erros[] = 'Este e-mail já está cadastrado.';
+
+        if ($tel_norm !== null) {
+            $ex2 = $pdo->prepare("SELECT id FROM usuarios WHERE telefone_norm = :t LIMIT 1");
+            $ex2->execute(['t' => $tel_norm]);
+            if ($ex2->fetch()) $erros[] = 'Este celular já está cadastrado em outra conta.';
+        }
     }
 
     if (!$erros) {
         $hash = password_hash($senha, PASSWORD_BCRYPT, ['cost' => 12]);
-        db()->prepare("
-            INSERT INTO usuarios (nome, email, senha_hash, telefone, role, status)
-            VALUES (:nome, :email, :hash, :tel, 'produtor', 'ativo')
-        ")->execute(['nome' => $nome, 'email' => $email, 'hash' => $hash, 'tel' => $tel ?: null]);
+        try {
+            db()->prepare("
+                INSERT INTO usuarios (nome, email, senha_hash, telefone, telefone_norm, role, status)
+                VALUES (:nome, :email, :hash, :tel, :telnorm, 'produtor', 'ativo')
+            ")->execute([
+                'nome' => $nome, 'email' => mb_strtolower($email), 'hash' => $hash,
+                'tel'  => $tel ?: null, 'telnorm' => $tel_norm,
+            ]);
 
-        log_atividade('usuarios', null, 'criar', null, ['email' => $email, 'nome' => $nome]);
-        flash('success', 'Conta criada com sucesso! Faça login para continuar.');
-        header('Location: login.php');
-        exit;
+            log_atividade('usuarios', null, 'criar', null, ['email' => $email, 'nome' => $nome]);
+            flash('success', 'Conta criada com sucesso! Faça login para continuar.');
+            header('Location: login.php');
+            exit;
+        } catch (PDOException $e) {
+            // 23505 = violação de índice único: alguém cadastrou o mesmo e-mail/celular
+            // entre a checagem acima e o INSERT (condição de corrida).
+            if ($e->getCode() === '23505') {
+                $erros[] = 'Este e-mail ou celular já está cadastrado.';
+            } else {
+                log_erro('Cadastro: ' . $e->getMessage(), __FILE__, __LINE__);
+                $erros[] = 'Não foi possível criar a conta agora. Tente novamente.';
+            }
+        }
     }
 }
 ?>

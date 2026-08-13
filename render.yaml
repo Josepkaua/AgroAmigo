@@ -31,5 +31,7 @@ services:
         generateValue: true  # Render gera uma chave segura automaticamente
       - key: APP_URL
         sync: false          # ex: https://agroamigo.onrender.com
+      - key: WHATSAPP_NUMERO
+        sync: false          # 55DDDNUMERO (só dígitos) — deixar em branco até o Cloud API funcionar
       - key: APP_ENV
         value: "production"

@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once 'includes/auth.php';
+require_once 'includes/mailer.php';
 
 session_init();
 security_headers();
@@ -87,12 +88,13 @@ function enviar_email_reset(string $para, string $nome, string $link): void
               . "Se não foi você, ignore este e-mail. Sua senha não será alterada.\n\n"
               . "— Equipe AgroAmigo ATERPEC";
 
-    $headers  = "From: noreply@agroamigo.com.br\r\n";
-    $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-
-    $ok = mail($para, $assunto, $corpo, $headers);
-    if (!$ok) {
-        error_log('[AgroAmigo] Falha ao enviar email de reset para: ' . $para);
+    // Antes daqui usava-se mail(), que na imagem Docker do Render NUNCA funciona
+    // (não há servidor de e-mail instalado nem sendmail_path configurado) — o
+    // usuário via "e-mail enviado" e nada chegava. Agora vai por SMTP de verdade.
+    $erro = null;
+    if (!enviar_email($para, $assunto, $corpo, $erro)) {
+        log_erro("Falha ao enviar e-mail de reset: {$erro}", __FILE__, __LINE__);
+        error_log('[AgroAmigo] Falha ao enviar e-mail de reset: ' . (string) $erro);
     }
 }
 ?>

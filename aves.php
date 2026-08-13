@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once 'includes/auth.php';
-require_login('index.php');
+session_init(); // conteúdo público — não exige login
 
 $pagina        = 'aves';
 $titulo_pagina = 'Aves';
@@ -13,8 +13,8 @@ $animal = [
     'descricao'=> 'Orientações para criação de galinhas caipiras, poedeiras e outras aves de quintal no Maranhão, sistema muito presente na agricultura familiar da região.',
     'racas' => [
         ['emoji'=>'🐔','nome'=>'Galinha Caipira (SRD)','tipo'=>'Corte/Ovos','imagem'=>'https://images.unsplash.com/photo-1588597989061-b60ad0eefdbf?w=600&q=80&auto=format&fit=crop','desc'=>'Aves mestiças sem padrão racial, adaptadas ao manejo extensivo do Maranhão. Produção: 130–180 ovos/ano com comportamento forrageador ativo — reduz custo de ração em 20–30% em piquetes. Peso vivo ao abate: 1,8–2,5 kg entre 90–120 dias. Alta resistência a ectoparasitas (piolhos, carrapatos). Valorização crescente no mercado de ovos e carne caipira.'],
-        ['emoji'=>'🥚','nome'=>'ISA Brown',             'tipo'=>'Poedeira',  'imagem'=>'https://images.unsplash.com/photo-1532978089407-0fd95ff9abf7?w=600&q=80&auto=format&fit=crop','desc'=>'Linhagem comercial híbrida poedeira de plumagem marrom-avermelhada. Produção: 300–320 ovos/ano, conversão 2,0–2,2 kg de ração/dúzia de ovos. Pico de postura entre 24 e 36 semanas, período produtivo de 70–80 semanas. Em sistema semi-intensivo com piquete, reduz custo de ração em 15–20% com pequena redução de postura. Principal linhagem de postura do Brasil.'],
-        ['emoji'=>'🐓','nome'=>'Pescoço Pelado',        'tipo'=>'Corte/Ovos','imagem'=>'https://images.unsplash.com/photo-1750957262505-bf9ede300507?w=600&q=80&auto=format&fit=crop','desc'=>'Variedade com gene Na (naked neck), que elimina 40% das penas do pescoço e peito, reduzindo a produção de calor corporal em ~30% — melhor adaptação fisiológica ao calor do Maranhão. Menor dispêndio energético com termorregulação resulta em mais energia para postura e crescimento. Produção: 160–200 ovos/ano, peso ao abate 2,0–2,8 kg. Ideal para regiões com temperatura acima de 30°C.'],
+        ['emoji'=>'🥚','nome'=>'ISA Brown',             'tipo'=>'Poedeira',  'imagem'=>'assets/img/racas/aves/isa-brown.jpg','desc'=>'Linhagem comercial híbrida poedeira de plumagem marrom-avermelhada. Produção: 300–320 ovos/ano, conversão 2,0–2,2 kg de ração/dúzia de ovos. Pico de postura entre 24 e 36 semanas, período produtivo de 70–80 semanas. Em sistema semi-intensivo com piquete, reduz custo de ração em 15–20% com pequena redução de postura. Principal linhagem de postura do Brasil.'],
+        ['emoji'=>'🐓','nome'=>'Pescoço Pelado',        'tipo'=>'Corte/Ovos','imagem'=>'assets/img/racas/aves/pescoco-pelado.jpg','desc'=>'Variedade com gene Na (naked neck), que elimina 40% das penas do pescoço e peito, reduzindo a produção de calor corporal em ~30% — melhor adaptação fisiológica ao calor do Maranhão. Menor dispêndio energético com termorregulação resulta em mais energia para postura e crescimento. Produção: 160–200 ovos/ano, peso ao abate 2,0–2,8 kg. Ideal para regiões com temperatura acima de 30°C.'],
     ],
     'topicos' => [
         [

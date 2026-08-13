@@ -230,6 +230,20 @@ $_saud   = $_hora < 12 ? 'Bom dia' : ($_hora < 18 ? 'Boa tarde' : 'Boa noite');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AgroAmigo ATERPEC — Assistência Técnica Rural Digital</title>
+
+    <meta name="description" content="Assistência técnica rural digital e gratuita para pequenos produtores do Maranhão: chatbot no WhatsApp e conteúdo técnico por espécie animal (bovinos, aves, suínos, caprinos, ovinos e peixes). Projeto ATERPEC — Verde Conecta / UEMA.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="AgroAmigo ATERPEC">
+    <meta property="og:title" content="AgroAmigo ATERPEC — Assistência Técnica Rural Digital">
+    <meta property="og:description" content="Assistência técnica rural digital e gratuita para pequenos produtores do Maranhão: chatbot no WhatsApp e conteúdo técnico por espécie animal.">
+    <meta property="og:image" content="<?= htmlspecialchars((defined('APP_URL') ? rtrim(APP_URL, '/') : '') . '/assets/img/favicon.png') ?>">
+    <meta property="og:locale" content="pt_BR">
+    <meta name="theme-color" content="#166534">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16.png">
+    <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -437,6 +451,74 @@ $_saud   = $_hora < 12 ? 'Bom dia' : ($_hora < 18 ? 'Boa tarde' : 'Boa noite');
             .lp-team-card{padding:20px 16px}
             .lp-cta{padding:60px 0}
         }
+
+        /* ───────────────────────────────────────────────────────────
+           POLIMENTO — mesma identidade visual, só acabamento.
+           Nada aqui muda cor de marca, layout ou estrutura.
+           ─────────────────────────────────────────────────────────── */
+
+        /* O título quebrava feio, deixando "mão" sozinho numa linha.
+           balance distribui as linhas de forma pareja. */
+        /* A fonte no tamanho máximo (3.6rem) não cabia na coluna do hero, então
+           "na palma da mão" quebrava e deixava "mão" sozinho numa linha. Baixando
+           o teto do clamp, a frase inteira cabe em uma linha só. */
+        .lp-hero-title{ font-size:clamp(1.95rem, 4vw, 3.05rem); text-wrap:balance; }
+        .lp-hero-desc { text-wrap:pretty; }
+
+        /* O link "Prefere só consultar?" estava com sublinhado padrão de
+           navegador, parecendo texto sem estilo. Vira link discreto com
+           seta que anda no hover. */
+        .lp-hero-link{
+            display:inline-flex; align-items:center; gap:7px;
+            color:rgba(255,255,255,.78); font-size:13.5px; font-weight:600;
+            text-decoration:none; padding:6px 0;
+            border-bottom:1px solid rgba(255,255,255,.28);
+            transition:color .18s ease, border-color .18s ease;
+        }
+        .lp-hero-link:hover{ color:#fff; border-color:rgba(255,255,255,.75); }
+        .lp-hero-link .seta{ transition:transform .18s ease; }
+        .lp-hero-link:hover .seta{ transform:translateX(3px); }
+
+        /* Separadores entre os selos, em vez de só espaço vazio */
+        .lp-hero-meta{ gap:0 !important; row-gap:10px !important; }
+        .lp-hero-meta-item{ padding-right:18px; margin-right:18px;
+                            border-right:1px solid rgba(255,255,255,.18); }
+        .lp-hero-meta-item:last-child{ border-right:0; margin-right:0; padding-right:0; }
+
+        /* Botões: leve elevação no hover e afundam no clique — dá sensação
+           de resposta ao toque, que é o que falta no celular. */
+        .lp-btn-hero-primary, .lp-btn-hero-secondary{
+            transition:transform .16s ease, box-shadow .16s ease,
+                       background .16s ease, border-color .16s ease;
+        }
+        .lp-btn-hero-primary:hover{ transform:translateY(-2px);
+            box-shadow:0 10px 24px rgba(0,0,0,.22); }
+        .lp-btn-hero-secondary:hover{ transform:translateY(-2px);
+            border-color:rgba(255,255,255,.6); }
+        .lp-btn-hero-primary:active,
+        .lp-btn-hero-secondary:active{ transform:translateY(0); }
+
+        /* ACESSIBILIDADE — quem navega por teclado não via onde estava.
+           :focus-visible só aparece no teclado, não atrapalha o clique. */
+        a:focus-visible, button:focus-visible,
+        input:focus-visible, select:focus-visible, textarea:focus-visible{
+            outline:3px solid #86efac; outline-offset:3px; border-radius:6px;
+        }
+
+        /* Respeita quem configurou menos animação no sistema */
+        @media (prefers-reduced-motion: reduce){
+            *, *::before, *::after{
+                animation-duration:.01ms !important;
+                transition-duration:.01ms !important;
+                scroll-behavior:auto !important;
+            }
+        }
+
+        /* No celular o título ficava grande demais e apertado */
+        @media (max-width:575px){
+            .lp-hero-title{ font-size:1.85rem; letter-spacing:-.6px; line-height:1.15; }
+            .lp-hero-meta-item{ padding-right:12px; margin-right:12px; font-size:12.5px; }
+        }
     </style>
 </head>
 <body>
@@ -445,6 +527,7 @@ $_saud   = $_hora < 12 ? 'Bom dia' : ($_hora < 18 ? 'Boa tarde' : 'Boa noite');
 <nav class="lp-nav" style="position:relative">
     <div class="lp-logo">🌱 Agro<strong>Amigo</strong></div>
     <div class="lp-nav-links">
+        <a href="home.php"  class="lp-nav-link">Conteúdo Técnico</a>
         <a href="#sobre"    class="lp-nav-link">Sobre</a>
         <a href="#funciona" class="lp-nav-link">Como funciona</a>
         <a href="#equipe"   class="lp-nav-link">Equipe</a>
@@ -459,6 +542,7 @@ $_saud   = $_hora < 12 ? 'Bom dia' : ($_hora < 18 ? 'Boa tarde' : 'Boa noite');
 
     <!-- Menu mobile -->
     <div class="lp-mob-menu" id="lp-mob-menu" aria-hidden="true">
+        <a href="home.php"  class="lp-mob-link">Conteúdo Técnico</a>
         <a href="#sobre"    class="lp-mob-link">Sobre</a>
         <a href="#funciona" class="lp-mob-link">Como funciona</a>
         <a href="#equipe"   class="lp-mob-link">Equipe</a>
@@ -494,6 +578,12 @@ $_saud   = $_hora < 12 ? 'Bom dia' : ($_hora < 18 ? 'Boa tarde' : 'Boa noite');
                         <i class="bi bi-box-arrow-in-right"></i> Já tenho conta
                     </a>
                 </div>
+                <p style="margin:-24px 0 28px">
+                    <a href="home.php" class="lp-hero-link">
+                        Prefere só consultar? Veja o conteúdo técnico sem criar conta
+                        <span class="seta" aria-hidden="true">→</span>
+                    </a>
+                </p>
                 <div class="lp-hero-meta">
                     <div class="lp-hero-meta-item"><i class="bi bi-check-circle-fill"></i> 100% gratuito</div>
                     <div class="lp-hero-meta-item"><i class="bi bi-shield-fill-check"></i> Dados seguros</div>

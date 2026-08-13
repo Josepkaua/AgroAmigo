@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once 'includes/auth.php';
-$usuario = require_login('index.php');
+$usuario = usuario_logado(); // conteúdo público — login é opcional aqui
 
 $pagina        = 'home';
 $titulo_pagina = 'Início';

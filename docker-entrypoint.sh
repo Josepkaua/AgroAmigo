@@ -27,6 +27,15 @@ define('SUPABASE_KEY', '${SUPABASE_KEY}');
 define('GOOGLE_CLIENT_ID',     '${GOOGLE_CLIENT_ID:-}');
 define('GOOGLE_CLIENT_SECRET', '${GOOGLE_CLIENT_SECRET:-}');
 
+// Envio de e-mail (recuperação de senha). A imagem php:8.2-apache NÃO tem
+// servidor de e-mail, então mail() nunca funciona aqui — o envio é por SMTP.
+define('SMTP_HOST', '${SMTP_HOST:-smtp.gmail.com}');
+define('SMTP_PORT', '${SMTP_PORT:-587}');
+define('SMTP_USER', '${SMTP_USER:-}');
+define('SMTP_PASS', '${SMTP_PASS:-}');
+define('SMTP_FROM', '${SMTP_FROM:-}');
+define('SMTP_NOME', '${SMTP_NOME:-AgroAmigo ATERPEC}');
+
 define('APP_SECRET',      '${APP_SECRET}');
 define('APP_URL',         '${APP_URL}');
 define('WHATSAPP_NUMERO', '${WHATSAPP_NUMERO:-}');

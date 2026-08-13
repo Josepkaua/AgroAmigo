@@ -1,7 +1,21 @@
 <?php
 // Template para páginas de animais.
 // Vars esperadas: $animal (array com nome, emoji, imagem, descricao, racas, topicos)
+require_once __DIR__ . '/conteudo.php';
+
+// As raças vêm do banco (editáveis pelo painel). Se a migration ainda não
+// rodou ou o banco falhar, cai no array que está no arquivo da espécie —
+// o site nunca fica sem conteúdo.
+$_racas = racas_da_especie($pagina ?? '', $animal['racas'] ?? []);
+
+// Banner da página, também editável (chave banner_bovinos, banner_aves, ...)
 $_img_hero = $animal['imagem'] ?? '';
+if (!empty($pagina)) {
+    $_hero_editado = conteudo('banner_' . $pagina, '');
+    if ($_hero_editado !== '') {
+        $_img_hero = img_raca($_hero_editado) ?: $_img_hero;
+    }
+}
 ?>
 
 <!-- HERO DA PÁGINA -->
@@ -31,7 +45,7 @@ $_img_hero = $animal['imagem'] ?? '';
             </h2>
         </div>
         <div class="row g-4 justify-content-center">
-            <?php foreach ($animal['racas'] as $raca): ?>
+            <?php foreach ($_racas as $raca): ?>
             <?php $_raca_img = img_raca($raca['imagem'] ?? ''); ?>
             <div class="col-md-6 col-lg-4">
                 <div class="aa-raca-card h-100">

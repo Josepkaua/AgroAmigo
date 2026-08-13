@@ -39,6 +39,15 @@ $g_titulo = $g_titulo ?? 'Gestão';
             <i class="bi bi-heart-pulse-fill"></i> Animais
         </a>
 
+
+        <div class="g-nav-divider"></div>
+        <div class="g-nav-label">Conteúdo do site</div>
+        <a href="racas.php" class="g-nav-link <?= $g_pagina === 'racas' ? 'active' : '' ?>">
+            <i class="bi bi-images"></i> Raças e Fotos
+        </a>
+        <a href="conteudo.php" class="g-nav-link <?= $g_pagina === 'conteudo' ? 'active' : '' ?>">
+            <i class="bi bi-pencil-square"></i> Textos e Banners
+        </a>
         <div class="g-nav-divider"></div>
         <div class="g-nav-label">Monitoramento</div>
         <a href="logs.php?aba=acesso"    class="g-nav-link <?= ($g_pagina === 'logs' && ($_GET['aba'] ?? '') === 'acesso')   ? 'active' : '' ?>">
@@ -58,8 +67,15 @@ $g_titulo = $g_titulo ?? 'Gestão';
     </nav>
 
     <div class="g-user-bar">
-        <div class="g-user-name"><?= h($admin['nome']) ?></div>
-        <div class="g-user-role">Administrador</div>
+        <?php
+        // Antes usava $admin, que só existe nas telas que chamam require_admin().
+        // Com o técnico tendo acesso às telas de conteúdo, pega o usuário da
+        // sessão e mostra o papel real em vez de escrever "Administrador" sempre.
+        $_u     = $admin ?? (usuario_logado() ?? []);
+        $_papel = ['admin' => 'Administrador', 'tecnico' => 'Técnico'][$_u['role'] ?? ''] ?? 'Equipe';
+        ?>
+        <div class="g-user-name"><?= h((string) ($_u['nome'] ?? 'Usuário')) ?></div>
+        <div class="g-user-role"><?= h($_papel) ?></div>
         <a href="../logout.php" class="g-logout">
             <i class="bi bi-box-arrow-left"></i> Sair
         </a>

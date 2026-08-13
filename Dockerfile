@@ -1,9 +1,14 @@
 FROM php:8.2-apache
 
-# Instala a extensão PDO + PostgreSQL
+# Instala PDO + PostgreSQL e a GD.
+# A GD é necessária para o upload de fotos pelo painel: toda imagem enviada é
+# decodificada e gravada de novo por ela. É esse redesenho que destrói qualquer
+# código escondido no arquivo — um JPEG válido com PHP colado no fim não
+# sobrevive a ser reprocessado.
 RUN apt-get update \
-    && apt-get install -y libpq-dev \
-    && docker-php-ext-install pdo pdo_pgsql \
+    && apt-get install -y libpq-dev libjpeg-dev libpng-dev libwebp-dev libfreetype6-dev \
+    && docker-php-ext-configure gd --with-jpeg --with-webp --with-freetype \
+    && docker-php-ext-install pdo pdo_pgsql gd \
     && rm -rf /var/lib/apt/lists/*
 
 # Habilita mod_rewrite para .htaccess

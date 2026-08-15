@@ -17,12 +17,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($nome !== '' && $mensagem !== '') {
         try {
             db()->prepare("
-                INSERT INTO mensagens_contato (usuario_id, nome, telefone, animal, topico, mensagem, ip)
-                VALUES (:uid, :nome, :tel, :animal, :topico, :msg, :ip)
+                INSERT INTO mensagens_contato (usuario_id, nome, telefone, email, animal, topico, mensagem, ip)
+                VALUES (:uid, :nome, :tel, :email, :animal, :topico, :msg, :ip)
             ")->execute([
                 'uid'    => usuario_logado()['id'] ?? null,
                 'nome'   => $nome,
                 'tel'    => trim($_POST['telefone'] ?? '') ?: null,
+                'email'  => filter_var(trim($_POST['email'] ?? ''), FILTER_VALIDATE_EMAIL) ?: null,
                 'animal' => trim($_POST['animal']   ?? '') ?: null,
                 'topico' => trim($_POST['topico']   ?? '') ?: null,
                 'msg'    => $mensagem,
@@ -35,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // vem depois de salvar, e nunca no lugar de salvar.
             avisar_nova_mensagem([
                 'nome'     => $nome,
+                'email'    => trim($_POST['email'] ?? ''),
                 'telefone' => trim($_POST['telefone'] ?? ''),
                 'animal'   => trim($_POST['animal']   ?? ''),
                 'topico'   => trim($_POST['topico']   ?? ''),
@@ -149,6 +151,17 @@ require 'includes/header.php';
                                 <input type="tel" id="telefone" name="telefone" class="form-control aa-input mt-1"
                                        placeholder="(XX) 9 9999-0000"
                                        value="<?= htmlspecialchars($_POST['telefone'] ?? '') ?>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="aa-label" for="email">
+                                    E-mail <span style="font-weight:400;color:#9ca3af;font-size:11px">(opcional)</span>
+                                </label>
+                                <input type="email" id="email" name="email" class="form-control aa-input mt-1"
+                                       placeholder="seu@email.com"
+                                       value="<?= htmlspecialchars($_POST['email'] ?? (usuario_logado()['email'] ?? '')) ?>">
+                                <small style="font-size:11px;color:#9ca3af">
+                                    Se informar, o técnico pode responder por e-mail. Senão, respondemos pelo telefone.
+                                </small>
                             </div>
                             <div class="col-md-6">
                                 <label class="aa-label" for="animal">Animal</label>

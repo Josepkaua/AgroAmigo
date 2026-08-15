@@ -48,6 +48,13 @@ $g_titulo = $g_titulo ?? 'Gestão';
         <a href="conteudo.php" class="g-nav-link <?= $g_pagina === 'conteudo' ? 'active' : '' ?>">
             <i class="bi bi-pencil-square"></i> Textos e Banners
         </a>
+        <a href="mensagens.php" class="g-nav-link <?= $g_pagina === 'mensagens' ? 'active' : '' ?>">
+            <i class="bi bi-chat-left-text"></i> Mensagens
+        </a>
+        <a href="email.php" class="g-nav-link <?= $g_pagina === 'email' ? 'active' : '' ?>">
+            <i class="bi bi-send"></i> Enviar E-mail
+        </a>
+
         <div class="g-nav-divider"></div>
         <div class="g-nav-label">Monitoramento</div>
         <a href="logs.php?aba=acesso"    class="g-nav-link <?= ($g_pagina === 'logs' && ($_GET['aba'] ?? '') === 'acesso')   ? 'active' : '' ?>">

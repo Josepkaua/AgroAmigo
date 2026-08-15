@@ -198,6 +198,15 @@ function img_raca(?string $caminho): string
 {
     $caminho = trim((string) $caminho);
     if ($caminho === '') return '';
+
+    // Imagem enviada pelo painel: fica no banco, servida por imagem.php
+    if (str_starts_with($caminho, 'db:')) {
+        $uuid = substr($caminho, 3);
+        return preg_match('/^[0-9a-f-]{36}$/i', $uuid)
+            ? 'imagem.php?id=' . rawurlencode($uuid)
+            : '';
+    }
+
     if (preg_match('#^https?://#i', $caminho)) return $caminho;
 
     return is_file(__DIR__ . '/../' . ltrim($caminho, '/')) ? $caminho : '';

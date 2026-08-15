@@ -21,9 +21,28 @@ if (!defined('SMTP_PASS'))  define('SMTP_PASS',  '');
 if (!defined('SMTP_FROM'))  define('SMTP_FROM',  '');
 if (!defined('SMTP_NOME'))  define('SMTP_NOME',  'AgroAmigo ATERPEC');
 
+// Brevo (API HTTP) — o caminho que realmente funciona no Render.
+//
+// POR QUE NÃO DÁ PRA USAR SMTP AQUI:
+// o Render bloqueia tráfego de saída nas portas 25, 465 e 587 nos serviços do
+// plano free (mudança oficial deles, para conter spam). O sintoma é justamente
+// "Connection timed out" ao falar com smtp.gmail.com:587 — o pacote nem sai da
+// máquina, então nem chega a testar a senha.
+// A API do Brevo fala HTTPS na porta 443, a mesma do site, que nunca é bloqueada.
+if (!defined('BREVO_API_KEY')) define('BREVO_API_KEY', '');
+
 function email_configurado(): bool
 {
-    return SMTP_HOST !== '' && SMTP_USER !== '' && SMTP_PASS !== '';
+    return BREVO_API_KEY !== ''
+        || (SMTP_HOST !== '' && SMTP_USER !== '' && SMTP_PASS !== '');
+}
+
+/** Qual caminho de envio está ativo — usado nas mensagens de diagnóstico */
+function email_transporte(): string
+{
+    if (BREVO_API_KEY !== '') return 'brevo';
+    if (SMTP_HOST !== '' && SMTP_USER !== '' && SMTP_PASS !== '') return 'smtp';
+    return 'nenhum';
 }
 
 function email_remetente(): string
@@ -56,12 +75,75 @@ function enviar_email(string $para, string $assunto, string $corpo, ?string &$er
     }
 
     try {
+        // Brevo primeiro: é o que funciona no Render free.
+        // O SMTP fica como alternativa caso um dia o serviço vire plano pago.
+        if (BREVO_API_KEY !== '') {
+            return brevo_enviar($para, $assunto, $corpo, $erro);
+        }
         return smtp_enviar($para, $assunto, $corpo, $erro);
     } catch (Throwable $e) {
         $erro = $e->getMessage();
-        log_erro('SMTP: ' . $e->getMessage(), __FILE__, __LINE__);
+        log_erro('Envio de e-mail: ' . $e->getMessage(), __FILE__, __LINE__);
         return false;
     }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Envio pela API HTTP do Brevo
+// ─────────────────────────────────────────────────────────────
+function brevo_enviar(string $para, string $assunto, string $corpo, ?string &$erro): bool
+{
+    $de = email_remetente();
+    if ($de === '') {
+        $erro = 'remetente não configurado (SMTP_FROM)';
+        return false;
+    }
+
+    $payload = json_encode([
+        'sender'      => ['name' => SMTP_NOME, 'email' => $de],
+        'to'          => [['email' => $para]],
+        'subject'     => $assunto,
+        'textContent' => $corpo,
+    ], JSON_UNESCAPED_UNICODE);
+
+    $ch = curl_init('https://api.brevo.com/v3/smtp/email');
+    curl_setopt_array($ch, [
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => $payload,
+        CURLOPT_HTTPHEADER     => [
+            'accept: application/json',
+            'content-type: application/json',
+            'api-key: ' . BREVO_API_KEY,
+        ],
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 20,
+        CURLOPT_CONNECTTIMEOUT => 10,
+        CURLOPT_SSL_VERIFYPEER => true,
+        CURLOPT_SSL_VERIFYHOST => 2,
+    ]);
+    $body = curl_exec($ch);
+    $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $cerr = curl_error($ch);
+    curl_close($ch);
+
+    if ($body === false) {
+        $erro = 'falha de rede ao falar com o Brevo: ' . $cerr;
+        return false;
+    }
+    // 201 = aceito para entrega
+    if ($code === 201) return true;
+
+    // Erros mais comuns, traduzidos para quem for ler o log depois
+    $json = json_decode((string) $body, true);
+    $msg  = is_array($json) ? ($json['message'] ?? '') : '';
+    $erro = match ($code) {
+        401     => 'chave do Brevo inválida (confira BREVO_API_KEY)',
+        400     => 'Brevo recusou: ' . $msg
+                 . ' — se falar em sender, verifique ' . $de . ' no painel do Brevo',
+        402     => 'cota do Brevo esgotada (limite diário atingido)',
+        default => "Brevo respondeu HTTP {$code}: {$msg}",
+    };
+    return false;
 }
 
 // ─────────────────────────────────────────────────────────────

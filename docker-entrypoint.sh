@@ -27,8 +27,15 @@ define('SUPABASE_KEY', '${SUPABASE_KEY}');
 define('GOOGLE_CLIENT_ID',     '${GOOGLE_CLIENT_ID:-}');
 define('GOOGLE_CLIENT_SECRET', '${GOOGLE_CLIENT_SECRET:-}');
 
-// Envio de e-mail (recuperação de senha). A imagem php:8.2-apache NÃO tem
-// servidor de e-mail, então mail() nunca funciona aqui — o envio é por SMTP.
+// Envio de e-mail.
+// Dois motivos para não usar o mail() do PHP nem SMTP direto aqui:
+//   1. A imagem php:8.2-apache não tem servidor de e-mail instalado.
+//   2. O Render bloqueia saída nas portas 25/465/587 no plano free, então
+//      SMTP dá "connection timed out" mesmo com a senha certa.
+// Por isso o envio real vai pela API HTTP do Brevo (porta 443).
+define('BREVO_API_KEY', '${BREVO_API_KEY:-}');
+
+// SMTP fica como alternativa, caso o serviço vire plano pago um dia.
 define('SMTP_HOST', '${SMTP_HOST:-smtp.gmail.com}');
 define('SMTP_PORT', '${SMTP_PORT:-587}');
 define('SMTP_USER', '${SMTP_USER:-}');

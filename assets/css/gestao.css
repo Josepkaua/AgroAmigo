@@ -111,3 +111,22 @@ a{text-decoration:none;color:inherit}
     .g-card-head{flex-wrap:wrap;gap:8px}
     .g-content{padding:12px 10px}
 }
+
+/* ── Telas de conteúdo editável (raças e textos) ───────── */
+.g-page-head{
+    display:flex;align-items:flex-start;justify-content:space-between;
+    gap:16px;flex-wrap:wrap;margin-bottom:20px;
+}
+.g-page-sub{
+    font-size:13px;color:#64748b;margin:4px 0 0;max-width:640px;line-height:1.55;
+}
+.g-card form,form.g-card{display:block}
+.g-campo-grupo{
+    background:#fff;border:1px solid #e2e8f0;border-radius:12px;
+    padding:18px 20px;margin-bottom:16px;
+}
+.g-campo-grupo h3{
+    font-size:14px;font-weight:700;color:#166534;margin:0 0 4px;
+    display:flex;align-items:center;gap:8px;
+}
+.g-campo-ajuda{font-size:11.5px;color:#94a3b8;display:block;margin-top:4px;line-height:1.45}

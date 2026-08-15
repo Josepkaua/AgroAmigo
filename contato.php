@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once 'includes/auth.php';
+require_once 'includes/emails.php';
 session_init(); // conteúdo público — não exige login
 
 $pagina        = 'contato';
@@ -28,6 +29,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'ip'     => ip_real(),
             ]);
             $sucesso = true;
+
+            // Avisa a caixa oficial do projeto. A mensagem JÁ foi gravada acima,
+            // então mesmo que o e-mail falhe nada se perde — por isso o aviso
+            // vem depois de salvar, e nunca no lugar de salvar.
+            avisar_nova_mensagem([
+                'nome'     => $nome,
+                'telefone' => trim($_POST['telefone'] ?? ''),
+                'animal'   => trim($_POST['animal']   ?? ''),
+                'topico'   => trim($_POST['topico']   ?? ''),
+                'mensagem' => $mensagem,
+            ]);
         } catch (Throwable $e) {
             log_erro('Falha ao salvar mensagem de contato: ' . $e->getMessage(), __FILE__, __LINE__);
             $erro_envio = true;

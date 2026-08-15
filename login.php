@@ -2,6 +2,7 @@
 declare(strict_types=1);
 require_once 'includes/auth.php';
 require_once 'auth/google_config.php';
+require_once 'includes/emails.php';
 
 session_init();
 
@@ -120,6 +121,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     login_usuario($user);
     log_acesso('login_ok', $user['id'], $user['email']);
+
+    // Aparelho novo nesta conta? Manda o aviso de segurança.
+    // Não avisa no primeiro aparelho (seria o próprio cadastro) nem quando já
+    // é conhecido — assim o produtor não recebe e-mail toda vez que entra.
+    registrar_dispositivo($user);
 
     $dest = ($user['role'] === 'admin') ? 'gestao/index.php' : 'index.php';
     if (!empty($_SESSION['login_next'])) {

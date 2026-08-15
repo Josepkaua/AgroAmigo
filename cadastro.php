@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once 'includes/auth.php';
+require_once 'includes/emails.php';
 
 session_init();
 security_headers();
@@ -53,16 +54,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$erros) {
         $hash = password_hash($senha, PASSWORD_BCRYPT, ['cost' => 12]);
         try {
-            db()->prepare("
+            $ins = db()->prepare("
                 INSERT INTO usuarios (nome, email, senha_hash, telefone, telefone_norm, role, status)
                 VALUES (:nome, :email, :hash, :tel, :telnorm, 'produtor', 'ativo')
-            ")->execute([
+                RETURNING id, nome, email
+            ");
+            $ins->execute([
                 'nome' => $nome, 'email' => mb_strtolower($email), 'hash' => $hash,
                 'tel'  => $tel ?: null, 'telnorm' => $tel_norm,
             ]);
+            $novo = $ins->fetch();
 
-            log_atividade('usuarios', null, 'criar', null, ['email' => $email, 'nome' => $nome]);
-            flash('success', 'Conta criada com sucesso! Faça login para continuar.');
+            log_atividade('usuarios', (string) ($novo['id'] ?? ''), 'criar', null,
+                          ['email' => $email, 'nome' => $nome]);
+
+            // E-mails de abertura de conta. Se o servidor de e-mail estiver fora,
+            // ficam guardados em emails_falhados — o cadastro NUNCA é perdido
+            // por causa disso.
+            if ($novo) {
+                enviar_verificacao($novo);
+                enviar_boas_vindas($novo);
+            }
+
+            flash('success', 'Conta criada! Enviamos um e-mail de confirmação para ' . $email
+                           . '. Você já pode entrar.');
             header('Location: login.php');
             exit;
         } catch (PDOException $e) {

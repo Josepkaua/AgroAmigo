@@ -111,6 +111,9 @@ function login_usuario(array $usuario): void
         'nome'  => $usuario['nome'],
         'email' => $usuario['email'],
         'role'  => $usuario['role'],
+        // Guardado na sessão para a faixa de "confirme seu e-mail" não precisar
+        // consultar o banco em toda página do site.
+        'email_verificado' => (bool) ($usuario['email_verificado'] ?? false),
     ];
     $_SESSION['_ua'] = md5($_SERVER['HTTP_USER_AGENT'] ?? '');
 }

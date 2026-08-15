@@ -48,6 +48,46 @@ header('Permissions-Policy: geolocation=(), microphone=(), camera=()');
 </head>
 <body style="padding-top:68px">
 
+<?php
+// ── Faixa "confirme seu e-mail" ─────────────────────────
+// Não bloqueia nada: a pessoa usa o site normalmente, só é lembrada, com botão
+// de reenviar. Bloquear o acesso faria perder cadastro de produtor com e-mail
+// pouco usado ou internet ruim.
+$_precisa_verificar = false;
+if ($_nav_user) {
+    if (!array_key_exists('email_verificado', $_nav_user)) {
+        // Sessão aberta antes desta funcionalidade: consulta uma vez e guarda
+        try {
+            $_v = db()->prepare("SELECT email_verificado FROM usuarios WHERE id = :id");
+            $_v->execute(['id' => $_nav_user['id']]);
+            $_SESSION['usuario']['email_verificado'] = (bool) $_v->fetchColumn();
+        } catch (Throwable $e) {
+            $_SESSION['usuario']['email_verificado'] = true;   // na dúvida, não incomoda
+        }
+        $_nav_user = $_SESSION['usuario'];
+    }
+    $_precisa_verificar = empty($_nav_user['email_verificado']);
+}
+?>
+<?php if ($_precisa_verificar): ?>
+<div style="position:fixed;top:68px;left:0;right:0;z-index:1029;background:#fef9c3;
+            border-bottom:1px solid #fde047;padding:9px 16px">
+  <div class="container d-flex flex-wrap align-items-center justify-content-center gap-2"
+       style="font-size:13.5px;color:#713f12">
+    <span><i class="bi bi-envelope-exclamation"></i>
+      Confirme seu e-mail para conseguir recuperar sua senha depois.</span>
+    <form method="POST" action="reenviar-verificacao.php" class="d-inline m-0">
+      <?= csrf_field() ?>
+      <input type="hidden" name="voltar" value="<?= h($_SERVER['REQUEST_URI'] ?? '/index.php') ?>">
+      <button class="btn btn-sm btn-warning fw-semibold" style="font-size:12.5px;padding:2px 12px">
+        Reenviar e-mail
+      </button>
+    </form>
+  </div>
+</div>
+<style>body{padding-top:112px !important}</style>
+<?php endif; ?>
+
 <nav class="navbar navbar-expand-lg aa-navbar fixed-top" id="mainNav">
     <div class="container">
 

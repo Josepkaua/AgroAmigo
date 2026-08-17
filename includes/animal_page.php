@@ -97,13 +97,88 @@ if (!empty($pagina)) {
                 <div id="topico<?= $i ?>" class="accordion-collapse collapse <?= $i === 0 ? 'show' : '' ?>"
                      data-bs-parent="#topicosAccordion">
                     <div class="accordion-body aa-accordion-body">
-                        <p><?= nl2br(htmlspecialchars($topico['intro'])) ?></p>
+                        <?php
+                        // Estrutura NOVA (por que / passos / números / alerta / fonte).
+                        // Espécies ainda não convertidas continuam usando intro + dicas —
+                        // os dois formatos convivem, então nada quebra durante a transição.
+                        ?>
+                        <?php if (!empty($topico['porque'])): ?>
+                            <p class="aa-topico-porque"><?= nl2br(htmlspecialchars($topico['porque'])) ?></p>
+                        <?php elseif (!empty($topico['intro'])): ?>
+                            <p><?= nl2br(htmlspecialchars($topico['intro'])) ?></p>
+                        <?php endif; ?>
+
+                        <?php if (!empty($topico['passos'])): ?>
+                        <div class="aa-bloco">
+                            <h4 class="aa-bloco-titulo">O que fazer</h4>
+                            <ol class="aa-passos">
+                                <?php foreach ($topico['passos'] as $p): ?>
+                                <li>
+                                    <strong><?= htmlspecialchars($p['acao']) ?></strong>
+                                    <?php if (!empty($p['detalhe'])): ?>
+                                        <span><?= htmlspecialchars($p['detalhe']) ?></span>
+                                    <?php endif; ?>
+                                </li>
+                                <?php endforeach; ?>
+                            </ol>
+                        </div>
+                        <?php endif; ?>
+
+                        <?php if (!empty($topico['numeros'])): ?>
+                        <div class="aa-bloco">
+                            <h4 class="aa-bloco-titulo">Números de referência</h4>
+                            <div class="aa-tabela-wrap">
+                            <table class="aa-tabela">
+                                <thead><tr><th>O quê</th><th>Referência</th></tr></thead>
+                                <tbody>
+                                <?php foreach ($topico['numeros'] as $n): ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($n[0]) ?></td>
+                                        <td><strong><?= htmlspecialchars($n[1]) ?></strong></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+
+                        <?php if (!empty($topico['alerta'])): ?>
+                        <div class="aa-alerta">
+                            <h4 class="aa-alerta-titulo">⚠️ Chame o técnico se</h4>
+                            <ul>
+                                <?php foreach ($topico['alerta'] as $a): ?>
+                                    <li><?= htmlspecialchars($a) ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                        <?php endif; ?>
+
                         <?php if (!empty($topico['dicas'])): ?>
                         <ul class="aa-dicas mt-3">
                             <?php foreach ($topico['dicas'] as $dica): ?>
                                 <li><?= htmlspecialchars($dica) ?></li>
                             <?php endforeach; ?>
                         </ul>
+                        <?php endif; ?>
+
+                        <?php if (!empty($topico['fonte'])): ?>
+                        <p class="aa-fonte">
+                            Fonte:
+                            <?php foreach ($topico['fonte'] as $k => $f): ?>
+                                <?= $k > 0 ? ' · ' : '' ?>
+                                <?php if (!empty($f['url'])): ?>
+                                    <a href="<?= htmlspecialchars($f['url']) ?>" target="_blank" rel="noopener">
+                                        <?= htmlspecialchars($f['texto']) ?>
+                                    </a>
+                                <?php else: ?>
+                                    <?= htmlspecialchars($f['texto']) ?>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                            <?php if (!empty($topico['revisado'])): ?>
+                                · Revisado em <?= htmlspecialchars($topico['revisado']) ?>
+                            <?php endif; ?>
+                        </p>
                         <?php endif; ?>
                     </div>
                 </div>

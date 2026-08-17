@@ -28,7 +28,9 @@ function racas_da_especie(string $especie, array $padrao = []): array
     if (isset($cache[$especie])) return $cache[$especie];
 
     try {
-        $st = db()->prepare("
+        $pdo = db_opcional();
+        if (!$pdo) return $cache[$especie] = $padrao;
+        $st = $pdo->prepare("
             SELECT emoji, nome, tipo, descricao, imagem
               FROM racas
              WHERE especie = :e AND ativo
@@ -63,7 +65,9 @@ function _blocos_conteudo(): array
 
     $blocos = [];
     try {
-        foreach (db()->query("SELECT chave, valor FROM conteudo_site")->fetchAll() as $b) {
+        $pdo = db_opcional();
+        if (!$pdo) return $blocos;
+        foreach ($pdo->query("SELECT chave, valor FROM conteudo_site")->fetchAll() as $b) {
             $blocos[$b['chave']] = $b['valor'];
         }
     } catch (Throwable $e) {

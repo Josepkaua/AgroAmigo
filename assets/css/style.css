@@ -1407,3 +1407,172 @@ ul    { list-style: none; padding: 0; }
     .aa-passa-btn{ max-width:none; }
     .aa-passa-btn.fim{ margin-left:0; }
 }
+
+/* =====================================================
+   GUIA TÉCNICO — refino visual (v3)
+   Ajustes finos: hierarquia do painel, linha do tempo,
+   números de referência e o bloco de alerta.
+   ===================================================== */
+
+/* fundo: brilho suave atrás do painel, dá profundidade */
+.aa-guia::after{
+    content:''; position:absolute; z-index:0; pointer-events:none;
+    right:-6%; top:22%; width:60%; height:60%;
+    background:radial-gradient(ellipse at center, rgba(74,222,128,.13) 0%, transparent 68%);
+    filter:blur(10px);
+}
+
+/* ── Navegação: barra verde no item ativo ─────────── */
+.aa-guia-item{ position:relative; overflow:hidden; }
+.aa-guia-item::before{
+    content:''; position:absolute; left:0; top:50%; transform:translateY(-50%);
+    width:3px; height:0; border-radius:0 3px 3px 0;
+    background:linear-gradient(180deg,var(--g400),var(--g600));
+    transition:height .25s ease;
+}
+.aa-guia-item.active::before{ height:60%; }
+.aa-guia-item.active .aa-guia-item-ico{
+    background:linear-gradient(140deg,var(--g100),var(--g200));
+    box-shadow:0 0 0 3px rgba(34,197,94,.14);
+}
+
+/* ── Painel: barra de leitura no topo do cartão ───── */
+.aa-painel{ position:relative; overflow:hidden; }
+.aa-painel-barra{
+    position:absolute; top:0; left:0; right:0; height:4px;
+    margin:0; border-radius:0; background:#eef4f0;
+}
+.aa-painel-barra span{
+    background:linear-gradient(90deg,var(--g400),var(--g600));
+    box-shadow:0 0 10px rgba(34,197,94,.5);
+}
+.aa-painel-topo{ align-items:flex-start; gap:16px; }
+.aa-painel-ico{
+    width:58px; height:58px; flex:0 0 58px; border-radius:18px; font-size:28px;
+    background:linear-gradient(140deg,#eafaf0,var(--g100));
+    border:1px solid var(--g100);
+    box-shadow:0 8px 20px rgba(22,163,74,.14), inset 0 1px 0 #fff;
+}
+.aa-painel-conta{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--g50); border:1px solid var(--g100);
+    padding:4px 10px; border-radius:999px; width:max-content;
+}
+.aa-painel-topo h3{ font-size:24px; line-height:1.2; letter-spacing:-.7px; }
+
+/* ── Títulos de seção com fio ─────────────────────── */
+.aa-secao-tit{ gap:12px; }
+.aa-secao-tit span{
+    display:inline-flex; align-items:center; justify-content:center;
+    min-width:24px; height:24px; padding:0 6px; border-radius:8px;
+    background:linear-gradient(140deg,var(--g600),var(--g700));
+    color:#fff; border:none; font-size:10.5px;
+    box-shadow:0 4px 10px rgba(22,163,74,.28);
+}
+.aa-secao-tit::after{
+    content:''; flex:1 1 auto; height:1px;
+    background:linear-gradient(90deg,var(--g100),transparent);
+}
+
+/* ── Linha do tempo ───────────────────────────────── */
+.aa-linha-tempo li{
+    padding:2px 14px 22px 52px; border-radius:12px;
+    transition:background .2s;
+}
+.aa-linha-tempo li:hover{ background:#f8fdfa; }
+.aa-linha-tempo li::before{
+    left:0; top:0; width:34px; height:34px; border:none; color:#fff;
+    background:linear-gradient(140deg,var(--g500),var(--g700));
+    box-shadow:0 0 0 4px #fff, 0 6px 14px rgba(22,163,74,.3);
+    font-size:13.5px;
+}
+.aa-linha-tempo::before{
+    left:16px; top:14px; bottom:20px;
+    background:linear-gradient(180deg,var(--g400),var(--g200) 65%,transparent);
+}
+.aa-linha-tempo li strong{ font-size:16px; letter-spacing:-.2px; }
+.aa-linha-tempo li p{ color:#657a6e; font-size:14.2px; }
+
+/* ── Números de referência ────────────────────────── */
+.aa-tiles{ grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px; }
+.aa-tile{
+    position:relative; overflow:hidden; background:#fff;
+    border:1px solid #e7f0ea; border-radius:16px; padding:18px 18px 17px;
+    gap:8px; box-shadow:0 2px 10px rgba(16,60,35,.05);
+}
+.aa-tile::before{
+    content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+    background:linear-gradient(180deg,var(--g400),var(--g600));
+    opacity:.85;
+}
+.aa-tile:hover{
+    transform:translateY(-3px); border-color:var(--g200);
+    box-shadow:0 12px 26px rgba(16,60,35,.12);
+}
+.aa-tile-valor{
+    font-size:19px; font-weight:800; color:var(--g900); letter-spacing:-.5px; line-height:1.22;
+}
+.aa-tile-rot{ font-size:10.5px; color:#8ea79a; letter-spacing:.9px; }
+
+/* ── Bloco de alerta ──────────────────────────────── */
+.aa-chamado{
+    padding:0; overflow:hidden; border-left-width:0;
+    border:1px solid #fecdd3; border-radius:18px;
+    background:#fff; box-shadow:0 10px 26px rgba(190,18,60,.08);
+}
+.aa-chamado-cab{
+    margin:0; padding:14px 20px; gap:11px;
+    background:linear-gradient(120deg,#dc2626,#b91c1c);
+    color:#fff; font-size:12.5px; letter-spacing:1px;
+}
+.aa-chamado-cab i{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:26px; height:26px; border-radius:50%;
+    background:rgba(255,255,255,.18); font-size:13px;
+}
+.aa-chamado ul{ margin:0; padding:16px 22px 4px; list-style:none; }
+.aa-chamado li{
+    position:relative; padding-left:24px; margin-bottom:11px;
+    color:#7f1d1d; font-size:14.2px;
+}
+.aa-chamado li::before{
+    content:''; position:absolute; left:6px; top:8px;
+    width:7px; height:7px; border-radius:50%;
+    background:#ef4444; box-shadow:0 0 0 3px rgba(239,68,68,.16);
+}
+.aa-chamado-btn{
+    margin:6px 22px 20px; padding:11px 22px;
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+    box-shadow:0 10px 24px rgba(220,38,38,.32);
+}
+.aa-chamado-btn:hover{
+    background:linear-gradient(135deg,#dc2626,#991b1b);
+    transform:translateY(-2px); box-shadow:0 14px 30px rgba(220,38,38,.42);
+}
+
+/* ── Rodapé da fonte ──────────────────────────────── */
+.aa-painel-fonte{
+    background:#f8fbf9; border:1px solid #eef4f0; border-radius:12px;
+    padding:13px 16px; margin-top:28px; border-top:1px solid #eef4f0;
+    color:#8b9c92;
+}
+
+@media (max-width:575px){
+    .aa-painel-ico{ width:48px; height:48px; flex:0 0 48px; font-size:23px; border-radius:15px; }
+    .aa-painel-topo h3{ font-size:20px; }
+    .aa-linha-tempo li{ padding-left:46px; padding-right:6px; }
+    .aa-tiles{ grid-template-columns:1fr; }
+    .aa-chamado-btn{ margin:6px 18px 18px; justify-content:center; }
+}
+
+/* Ajuste fino dos números: as frases são longas, então o valor
+   precisa de um corpo um pouco menor e quebra equilibrada. */
+.aa-tile-valor{ font-size:17.5px; text-wrap:balance; }
+.aa-tile{ justify-content:space-between; }
+.aa-chamado-cab i{ line-height:1; }
+
+/* Contraste: os rótulos cinza-esverdeados ficavam claros demais para
+   leitura no celular sob sol. Escurecidos para passar no mínimo do WCAG. */
+.aa-tile-rot{ color:#5c7268; }
+.aa-painel-fonte{ color:#63786d; }
+.aa-linha-tempo li p{ color:#586a60; }

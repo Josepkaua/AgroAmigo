@@ -167,15 +167,15 @@ foreach ($_topicos as $_t) {
                      id="painel-<?= $i ?>" role="tabpanel" aria-labelledby="aba-<?= $i ?>" tabindex="0">
 
                     <div class="aa-painel">
+                        <div class="aa-painel-barra" aria-hidden="true">
+                            <span style="width:<?= $_qtd_top ? round(($i + 1) / $_qtd_top * 100) : 0 ?>%"></span>
+                        </div>
                         <div class="aa-painel-topo">
                             <span class="aa-painel-ico"><?= $topico['icone'] ?></span>
                             <div class="aa-painel-tit">
                                 <span class="aa-painel-conta">Assunto <?= $i + 1 ?> de <?= $_qtd_top ?></span>
                                 <h3><?= htmlspecialchars($topico['titulo']) ?></h3>
                             </div>
-                        </div>
-                        <div class="aa-painel-barra" aria-hidden="true">
-                            <span style="width:<?= $_qtd_top ? round(($i + 1) / $_qtd_top * 100) : 0 ?>%"></span>
                         </div>
 
                         <?php if (!empty($topico['porque'])): ?>

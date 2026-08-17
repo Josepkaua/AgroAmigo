@@ -70,53 +70,72 @@ if (!empty($pagina)) {
     </div>
 </section>
 
-<!-- TÓPICOS TÉCNICOS -->
-<section class="aa-section-alt">
+<!-- GUIA TÉCNICO -->
+<section class="aa-guia">
     <div class="container">
-        <div class="text-center mb-5">
-            <span class="aa-section-badge">Guia Técnico</span>
-            <h2 class="aa-section-title mt-2">
-                Orientações de <span class="aa-highlight-section">Criação</span>
-            </h2>
-            <p class="aa-section-desc">Clique em cada tópico para expandir as informações</p>
-        </div>
 
-        <div class="accordion aa-accordion" id="topicosAccordion">
-            <?php foreach ($animal['topicos'] as $i => $topico): ?>
-            <div class="accordion-item aa-accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button aa-accordion-btn <?= $i > 0 ? 'collapsed' : '' ?>"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#topico<?= $i ?>"
-                            aria-expanded="<?= $i === 0 ? 'true' : 'false' ?>">
-                        <span class="aa-topic-icon"><?= $topico['icone'] ?></span>
-                        <?= htmlspecialchars($topico['titulo']) ?>
-                    </button>
-                </h2>
-                <div id="topico<?= $i ?>" class="accordion-collapse collapse <?= $i === 0 ? 'show' : '' ?>"
-                     data-bs-parent="#topicosAccordion">
-                    <div class="accordion-body aa-accordion-body">
-                        <?php
-                        // Estrutura NOVA (por que / passos / números / alerta / fonte).
-                        // Espécies ainda não convertidas continuam usando intro + dicas —
-                        // os dois formatos convivem, então nada quebra durante a transição.
-                        ?>
+        <header class="aa-guia-head">
+            <span class="aa-guia-tag">Guia Técnico</span>
+            <h2 class="aa-guia-titulo">
+                Como criar <span><?= htmlspecialchars(mb_strtolower($animal['nome'])) ?></span> do jeito certo
+            </h2>
+            <p class="aa-guia-sub">
+                Orientação prática para o pequeno produtor do Maranhão.
+                Escolha o assunto e veja o passo a passo.
+            </p>
+        </header>
+
+        <div class="aa-guia-grid">
+
+            <!-- Navegação dos assuntos -->
+            <nav class="aa-guia-nav" role="tablist" aria-label="Assuntos do guia técnico">
+                <?php foreach ($animal['topicos'] as $i => $t): ?>
+                <button class="aa-guia-item <?= $i === 0 ? 'active' : '' ?>"
+                        id="aba-<?= $i ?>"
+                        data-bs-toggle="pill"
+                        data-bs-target="#painel-<?= $i ?>"
+                        type="button" role="tab"
+                        aria-controls="painel-<?= $i ?>"
+                        aria-selected="<?= $i === 0 ? 'true' : 'false' ?>">
+                    <span class="aa-guia-item-ico"><?= $t['icone'] ?></span>
+                    <span class="aa-guia-item-txt">
+                        <strong><?= htmlspecialchars($t['titulo']) ?></strong>
+                        <?php if (!empty($t['passos'])): ?>
+                        <small><?= count($t['passos']) ?> passos</small>
+                        <?php endif; ?>
+                    </span>
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+                <?php endforeach; ?>
+            </nav>
+
+            <!-- Painéis -->
+            <div class="tab-content aa-guia-conteudo">
+                <?php foreach ($animal['topicos'] as $i => $topico): ?>
+                <div class="tab-pane fade <?= $i === 0 ? 'show active' : '' ?>"
+                     id="painel-<?= $i ?>" role="tabpanel" aria-labelledby="aba-<?= $i ?>" tabindex="0">
+
+                    <div class="aa-painel">
+                        <div class="aa-painel-topo">
+                            <span class="aa-painel-ico"><?= $topico['icone'] ?></span>
+                            <h3><?= htmlspecialchars($topico['titulo']) ?></h3>
+                        </div>
+
                         <?php if (!empty($topico['porque'])): ?>
-                            <p class="aa-topico-porque"><?= nl2br(htmlspecialchars($topico['porque'])) ?></p>
+                            <p class="aa-lead"><?= nl2br(htmlspecialchars($topico['porque'])) ?></p>
                         <?php elseif (!empty($topico['intro'])): ?>
-                            <p><?= nl2br(htmlspecialchars($topico['intro'])) ?></p>
+                            <p class="aa-lead"><?= nl2br(htmlspecialchars($topico['intro'])) ?></p>
                         <?php endif; ?>
 
                         <?php if (!empty($topico['passos'])): ?>
-                        <div class="aa-bloco">
-                            <h4 class="aa-bloco-titulo">O que fazer</h4>
-                            <ol class="aa-passos">
+                        <div class="aa-secao">
+                            <h4 class="aa-secao-tit"><span>01</span> O que fazer</h4>
+                            <ol class="aa-linha-tempo">
                                 <?php foreach ($topico['passos'] as $p): ?>
                                 <li>
                                     <strong><?= htmlspecialchars($p['acao']) ?></strong>
                                     <?php if (!empty($p['detalhe'])): ?>
-                                        <span><?= htmlspecialchars($p['detalhe']) ?></span>
+                                        <p><?= htmlspecialchars($p['detalhe']) ?></p>
                                     <?php endif; ?>
                                 </li>
                                 <?php endforeach; ?>
@@ -125,65 +144,70 @@ if (!empty($pagina)) {
                         <?php endif; ?>
 
                         <?php if (!empty($topico['numeros'])): ?>
-                        <div class="aa-bloco">
-                            <h4 class="aa-bloco-titulo">Números de referência</h4>
-                            <div class="aa-tabela-wrap">
-                            <table class="aa-tabela">
-                                <thead><tr><th>O quê</th><th>Referência</th></tr></thead>
-                                <tbody>
+                        <div class="aa-secao">
+                            <h4 class="aa-secao-tit"><span>02</span> Números de referência</h4>
+                            <div class="aa-tiles">
                                 <?php foreach ($topico['numeros'] as $n): ?>
-                                    <tr>
-                                        <td><?= htmlspecialchars($n[0]) ?></td>
-                                        <td><strong><?= htmlspecialchars($n[1]) ?></strong></td>
-                                    </tr>
+                                <div class="aa-tile">
+                                    <span class="aa-tile-valor"><?= htmlspecialchars($n[1]) ?></span>
+                                    <span class="aa-tile-rot"><?= htmlspecialchars($n[0]) ?></span>
+                                </div>
                                 <?php endforeach; ?>
-                                </tbody>
-                            </table>
                             </div>
                         </div>
                         <?php endif; ?>
 
                         <?php if (!empty($topico['alerta'])): ?>
-                        <div class="aa-alerta">
-                            <h4 class="aa-alerta-titulo">⚠️ Chame o técnico se</h4>
-                            <ul>
-                                <?php foreach ($topico['alerta'] as $a): ?>
-                                    <li><?= htmlspecialchars($a) ?></li>
-                                <?php endforeach; ?>
-                            </ul>
+                        <div class="aa-secao">
+                            <div class="aa-chamado">
+                                <div class="aa-chamado-cab">
+                                    <i class="bi bi-exclamation-triangle-fill"></i>
+                                    <span>Pare e chame o técnico se</span>
+                                </div>
+                                <ul>
+                                    <?php foreach ($topico['alerta'] as $a): ?>
+                                        <li><?= htmlspecialchars($a) ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                                <a href="contato.php" class="aa-chamado-btn">
+                                    <i class="bi bi-whatsapp"></i> Falar com um técnico agora
+                                </a>
+                            </div>
                         </div>
                         <?php endif; ?>
 
                         <?php if (!empty($topico['dicas'])): ?>
-                        <ul class="aa-dicas mt-3">
-                            <?php foreach ($topico['dicas'] as $dica): ?>
-                                <li><?= htmlspecialchars($dica) ?></li>
-                            <?php endforeach; ?>
-                        </ul>
+                        <div class="aa-secao">
+                            <h4 class="aa-secao-tit"><span>01</span> Pontos de atenção</h4>
+                            <ul class="aa-dicas"><?php foreach ($topico['dicas'] as $d): ?>
+                                <li><?= htmlspecialchars($d) ?></li>
+                            <?php endforeach; ?></ul>
+                        </div>
                         <?php endif; ?>
 
                         <?php if (!empty($topico['fonte'])): ?>
-                        <p class="aa-fonte">
-                            Fonte:
-                            <?php foreach ($topico['fonte'] as $k => $f): ?>
-                                <?= $k > 0 ? ' · ' : '' ?>
-                                <?php if (!empty($f['url'])): ?>
-                                    <a href="<?= htmlspecialchars($f['url']) ?>" target="_blank" rel="noopener">
-                                        <?= htmlspecialchars($f['texto']) ?>
-                                    </a>
-                                <?php else: ?>
-                                    <?= htmlspecialchars($f['texto']) ?>
+                        <footer class="aa-painel-fonte">
+                            <i class="bi bi-patch-check-fill"></i>
+                            <span>
+                                Baseado em
+                                <?php foreach ($topico['fonte'] as $k => $f): ?>
+                                    <?= $k > 0 ? ' e ' : '' ?>
+                                    <?php if (!empty($f['url'])): ?>
+                                        <a href="<?= htmlspecialchars($f['url']) ?>" target="_blank" rel="noopener"><?= htmlspecialchars($f['texto']) ?></a>
+                                    <?php else: ?><?= htmlspecialchars($f['texto']) ?><?php endif; ?>
+                                <?php endforeach; ?>
+                                <?php if (!empty($topico['revisado'])): ?>
+                                    · revisado em <?= htmlspecialchars($topico['revisado']) ?>
                                 <?php endif; ?>
-                            <?php endforeach; ?>
-                            <?php if (!empty($topico['revisado'])): ?>
-                                · Revisado em <?= htmlspecialchars($topico['revisado']) ?>
-                            <?php endif; ?>
-                        </p>
+                            </span>
+                        </footer>
                         <?php endif; ?>
                     </div>
+
                 </div>
+                <?php endforeach; ?>
             </div>
-            <?php endforeach; ?>
+
         </div>
     </div>
 </section>
